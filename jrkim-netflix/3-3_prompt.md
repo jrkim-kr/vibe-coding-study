@@ -13,14 +13,14 @@
     - 2차 확인 : 쿼리 파라미터 확인 : 해당 서비스가 제공하고 있는 쿼리 파라미터가 맞는지
   - Status Code
 - Networks → Payload
+
   - 정리된 쿼리 파라미터 값들
 
 - Networks → Preview
   - Response의 읽기 쉬운 버전
 - Networks → Response
   - 응답의 Raw 버전
- 
+
 ### 결과물
+
 ![3-3_결과물](https://github.com/user-attachments/assets/8220c7b2-b33e-442c-910e-51eb94ebc999)
-
-

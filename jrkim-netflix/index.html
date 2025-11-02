@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netflix Style - 현재 상영 영화</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">NETFLIX</div>
+      <div class="nav-links">
+        <a href="#" class="nav-link active">홈</a>
+        <a href="#" class="nav-link">시리즈</a>
+        <a href="#" class="nav-link">영화</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1 class="hero-title">현재 상영 중인 영화</h1>
+      <p class="hero-subtitle">지금 극장에서 만나볼 수 있는 최신 영화들을 확인하세요</p>
+    </section>
+
+    <section class="movie-section">
+      <h2 class="section-title">상영 중</h2>
+      <div class="movie-container" id="movieContainer">
+        <!-- 영화 카드들이 동적으로 여기에 추가됩니다 -->
+        <div class="loading">영화 정보를 불러오는 중...</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 Netflix Style. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,21 +1,5 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.5.0/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  push,
-  remove,
-  update,
-  onValue,
-} from "https://www.gstatic.com/firebasejs/12.5.0/firebase-database.js";
-import { firebaseConfig } from "./firebase-config.js";
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Realtime Database
-const database = getDatabase(app);
-const todosRef = ref(database, "todos");
+// API 기본 URL 설정
+const API_BASE_URL = "http://localhost:5000";
 
 // 할일 목록을 저장할 배열
 let todos = [];
@@ -26,61 +10,54 @@ const todoInput = document.getElementById("todoInput");
 const addBtn = document.getElementById("addBtn");
 const todoList = document.getElementById("todoList");
 
-// Firebase에서 할일 목록 불러오기 (실시간 동기화)
-function loadTodos() {
-  onValue(
-    todosRef,
-    (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Firebase에서 가져온 데이터를 배열로 변환
-        todos = Object.keys(data)
-          .map((key) => ({
-            id: key,
-            ...data[key],
-          }))
-          .sort((a, b) => {
-            // createdAt 기준으로 최신순 정렬
-            if (a.createdAt && b.createdAt) {
-              return new Date(b.createdAt) - new Date(a.createdAt);
-            }
-            return 0;
-          });
-      } else {
-        todos = [];
-      }
-      // 수정 중인 항목의 ID가 더 이상 존재하지 않으면 수정 모드 종료
-      if (editingId && !todos.find((t) => t.id === editingId)) {
-        editingId = null;
-      }
-      renderTodos();
-    },
-    (error) => {
-      console.error("데이터 로드 실패:", error);
-      renderTodos();
+// 서버에서 할일 목록 불러오기
+async function loadTodos() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/todos`);
+    if (!response.ok) {
+      throw new Error("할일 목록을 불러오는데 실패했습니다.");
     }
-  );
+    const data = await response.json();
+    todos = data || [];
+    // 수정 중인 항목의 ID가 더 이상 존재하지 않으면 수정 모드 종료
+    if (editingId && !todos.find((t) => t._id === editingId)) {
+      editingId = null;
+    }
+    renderTodos();
+  } catch (error) {
+    console.error("데이터 로드 실패:", error);
+    alert(
+      "할일 목록을 불러오는데 실패했습니다. 서버가 실행 중인지 확인해주세요."
+    );
+    renderTodos();
+  }
 }
 
 // 할일 추가
 async function addTodo() {
-  const text = todoInput.value.trim();
-  if (text === "") {
+  const title = todoInput.value.trim();
+  if (title === "") {
     todoInput.focus();
     return;
   }
 
-  const newTodo = {
-    text: text,
-    completed: false,
-    createdAt: new Date().toISOString(),
-  };
-
   try {
-    // Firebase에 새 할일 추가 (push를 사용하면 자동으로 고유 키 생성)
-    const newTodoRef = push(todosRef, newTodo);
+    const response = await fetch(`${API_BASE_URL}/todos`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title }),
+    });
+
+    if (!response.ok) {
+      throw new Error("할일 추가에 실패했습니다.");
+    }
+
     todoInput.value = "";
     todoInput.focus();
+    // 목록 새로고침
+    await loadTodos();
   } catch (error) {
     console.error("할일 추가 실패:", error);
     alert("할일 추가에 실패했습니다. 다시 시도해주세요.");
@@ -90,8 +67,16 @@ async function addTodo() {
 // 할일 삭제
 async function deleteTodo(id) {
   try {
-    const todoRef = ref(database, `todos/${id}`);
-    await remove(todoRef);
+    const response = await fetch(`${API_BASE_URL}/todos/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("할일 삭제에 실패했습니다.");
+    }
+
+    // 목록 새로고침
+    await loadTodos();
   } catch (error) {
     console.error("할일 삭제 실패:", error);
     alert("할일 삭제에 실패했습니다. 다시 시도해주세요.");
@@ -100,13 +85,25 @@ async function deleteTodo(id) {
 
 // 할일 완료 토글
 async function toggleTodo(id) {
-  const todo = todos.find((t) => t.id === id);
+  const todo = todos.find((t) => t._id === id);
   if (todo) {
     try {
-      const todoRef = ref(database, `todos/${id}`);
-      await update(todoRef, {
-        completed: !todo.completed,
+      const response = await fetch(`${API_BASE_URL}/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          completed: !todo.completed,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error("할일 상태 업데이트에 실패했습니다.");
+      }
+
+      // 목록 새로고침
+      await loadTodos();
     } catch (error) {
       console.error("할일 상태 업데이트 실패:", error);
       alert("할일 상태 업데이트에 실패했습니다. 다시 시도해주세요.");
@@ -127,17 +124,27 @@ function cancelEdit() {
 }
 
 // 할일 수정 저장
-async function saveEdit(id, newText) {
-  const todo = todos.find((t) => t.id === id);
-  if (todo && newText.trim() !== "") {
+async function saveEdit(id, newTitle) {
+  const todo = todos.find((t) => t._id === id);
+  if (todo && newTitle.trim() !== "") {
     try {
-      const todoRef = ref(database, `todos/${id}`);
-      await update(todoRef, {
-        text: newText.trim(),
+      const response = await fetch(`${API_BASE_URL}/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: newTitle.trim(),
+        }),
       });
-      // 수정 모드 종료 및 UI 즉시 업데이트
+
+      if (!response.ok) {
+        throw new Error("할일 수정에 실패했습니다.");
+      }
+
+      // 수정 모드 종료 및 목록 새로고침
       editingId = null;
-      renderTodos();
+      await loadTodos();
     } catch (error) {
       console.error("할일 수정 실패:", error);
       alert("할일 수정에 실패했습니다. 다시 시도해주세요.");
@@ -169,7 +176,7 @@ function renderTodos() {
 
   todoList.innerHTML = todos
     .map((todo) => {
-      const isEditing = editingId === todo.id;
+      const isEditing = editingId === todo._id;
 
       if (isEditing) {
         return `
@@ -177,14 +184,14 @@ function renderTodos() {
                     <input 
                         type="text" 
                         class="todo-edit-input" 
-                        value="${escapeHtml(todo.text)}"
-                        id="editInput-${todo.id}"
-                        onkeypress="handleEditKeyPress(event, '${todo.id}')"
+                        value="${escapeHtml(todo.title)}"
+                        id="editInput-${todo._id}"
+                        onkeypress="handleEditKeyPress(event, '${todo._id}')"
                         autofocus
                     >
                     <div class="todo-actions">
                         <button class="todo-btn save-btn" onclick="handleSaveEdit('${
-                          todo.id
+                          todo._id
                         }')">
                             저장
                         </button>
@@ -200,18 +207,18 @@ function renderTodos() {
             <li class="todo-item ${todo.completed ? "completed" : ""}">
                 <div class="todo-checkbox ${
                   todo.completed ? "checked" : ""
-                }" onclick="toggleTodo('${todo.id}')"></div>
+                }" onclick="toggleTodo('${todo._id}')"></div>
                 <span class="todo-text" onclick="toggleTodo('${
-                  todo.id
-                }')">${escapeHtml(todo.text)}</span>
+                  todo._id
+                }')">${escapeHtml(todo.title)}</span>
                 <div class="todo-actions">
                     <button class="todo-btn edit-btn" onclick="startEdit('${
-                      todo.id
+                      todo._id
                     }')">
                         수정
                     </button>
                     <button class="todo-btn delete-btn" onclick="deleteTodo('${
-                      todo.id
+                      todo._id
                     }')">
                         삭제
                     </button>

@@ -2,6 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 import todoRoutes from "./routes/todoRoutes.js";
 
 // 환경 변수 로드
@@ -11,6 +12,7 @@ const app = express();
 const PORT = 5000;
 
 // Express 미들웨어 설정
+app.use(cors()); // CORS 설정 - 모든 도메인에서 접근 허용
 app.use(express.json());
 
 // MongoDB 연결

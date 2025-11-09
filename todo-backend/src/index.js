@@ -2,6 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import todoRoutes from "./routes/todoRoutes.js";
 
 // 환경 변수 로드
 dotenv.config();
@@ -33,6 +34,9 @@ mongoose
 app.get("/", (req, res) => {
   res.json({ message: "Todo Backend API" });
 });
+
+// Todo 라우트
+app.use("/todos", todoRoutes);
 
 // MongoDB 연결 상태 확인
 mongoose.connection.on("connected", () => {

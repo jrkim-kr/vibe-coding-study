@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-// API 기본 URL 설정
-const API_BASE_URL = "http://localhost:5000";
+// API 기본 URL 설정 (환경변수에서 가져오기)
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
 function App() {
   const [todos, setTodos] = useState([]);

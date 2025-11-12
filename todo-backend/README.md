@@ -17,6 +17,9 @@ npm install
 ### 실행
 
 ```bash
+# 환경 변수 설정 (.env 파일 직접 생성)
+echo 'MONGODB_URI=YOUR_MONGODB_CONNECTION_STRING' > .env
+
 # 개발 모드 (파일 변경 시 자동 재시작)
 npm run dev
 

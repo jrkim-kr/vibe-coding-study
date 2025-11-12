@@ -9,7 +9,7 @@ import todoRoutes from "./routes/todoRoutes.js";
 dotenv.config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // Express 미들웨어 설정
 app.use(cors()); // CORS 설정 - 모든 도메인에서 접근 허용

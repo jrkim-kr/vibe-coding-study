@@ -1,4 +1,4 @@
-![image.png](attachment:fcde6de3-e8d4-4031-99d4-085082fb97b8:image.png)
+<img width="614" height="456" alt="image" src="https://github.com/user-attachments/assets/b57ec4ea-f41c-40aa-bad3-d332602e2e2d" />
 
 ## MVC 패턴 쉽게 이해하기 🎯
 

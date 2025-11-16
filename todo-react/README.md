@@ -5,6 +5,7 @@ Vite를 사용한 React Todo 애플리케이션입니다.
 ## 목차
 
 - [시작하기](#시작하기)
+- [기술 스택](#기술-스택)
 - [개발](#개발)
 - [빌드](#빌드)
 - [배포](#배포)
@@ -42,6 +43,24 @@ VITE_API_BASE_URL=https://your-backend-url-here.com
 ```
 VITE_API_BASE_URL=http://localhost:5000
 ```
+
+## 기술 스택
+
+### 핵심 기술
+
+- **React** `^18.2.0` - UI 라이브러리
+- **React DOM** `^18.2.0` - React DOM 렌더링
+
+### 빌드 도구
+
+- **Vite** `^5.0.8` - 빠른 빌드 도구 및 개발 서버
+- **@vitejs/plugin-react** `^4.2.1` - Vite용 React 플러그인
+
+### 배포
+
+- **Vercel** - 프론트엔드 배포 플랫폼
+
+전체 기술 스택은 [TODO_TECH_STACK.md](../TODO_TECH_STACK.md)를 참고하세요.
 
 ## 개발
 

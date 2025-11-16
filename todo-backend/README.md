@@ -5,6 +5,7 @@ Todo Backend API 서버입니다.
 ## 목차
 
 - [시작하기](#시작하기)
+- [기술 스택](#기술-스택)
 - [프로젝트 구조](#프로젝트-구조)
 - [API 문서](#api-문서)
 - [배포](#배포)
@@ -42,6 +43,29 @@ npm start
 
 서버는 기본적으로 `http://localhost:5000`에서 실행됩니다.
 
+## 기술 스택
+
+### 핵심 기술
+
+- **Node.js** (v18+) - JavaScript 런타임
+- **Express** `^5.1.0` - 웹 프레임워크
+
+### 데이터베이스
+
+- **MongoDB Atlas** - 클라우드 NoSQL 데이터베이스
+- **Mongoose** `^8.19.2` - MongoDB ODM
+
+### 주요 라이브러리
+
+- **CORS** `^2.8.5` - Cross-Origin Resource Sharing
+- **dotenv** `^17.2.3` - 환경 변수 관리
+
+### 배포
+
+- **Cloudtype** - 백엔드 배포 플랫폼
+
+전체 기술 스택은 [TODO_TECH_STACK.md](../TODO_TECH_STACK.md)를 참고하세요.
+
 ## 프로젝트 구조
 
 일반적인 Node.js 백엔드 프로젝트는 **`src` 폴더 안에 모든 소스 코드**를 구성합니다. 이는 다음과 같은 이유로 권장됩니다:
@@ -56,16 +80,18 @@ npm start
 todo-backend/
 ├── src/
 │   ├── index.js         # 메인 엔트리 포인트 (서버 시작)
-│   ├── models/          # 데이터베이스 모델 (Mongoose 스키마)
+│   ├── models/          # Model: 데이터베이스 모델 (Mongoose 스키마)
 │   │   └── Todo.js      # Todo 모델
-│   ├── controllers/     # 비즈니스 로직 (요청 처리)
+│   ├── controllers/     # Controller: 비즈니스 로직 (요청 처리)
 │   │   └── todoController.js
-│   └── routes/          # API 라우트 정의
+│   └── routes/          # Routes: URL 라우팅 (MVC의 일부 아님)
 │       └── todoRoutes.js
 ├── package.json         # 프로젝트 설정 및 의존성
 ├── .gitignore          # Git 무시 파일 목록
 └── README.md           # 프로젝트 문서
 ```
+
+**참고**: 이 프로젝트는 **MVC 패턴**을 따릅니다. View는 프론트엔드(React 앱)에서 담당하며, 백엔드는 JSON 데이터만 반환합니다. Routes는 URL을 컨트롤러 함수에 매핑하는 역할만 합니다. 자세한 내용은 [ARCHITECTURE.md](./ARCHITECTURE.md)를 참고하세요.
 
 ### 확장 가능한 구조 (향후 추가 가능)
 

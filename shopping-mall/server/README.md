@@ -44,14 +44,16 @@ npm start
 | `PORT` | 서버 포트 | `5000` |
 | `MONGODB_URI` | MongoDB 연결 URI | `mongodb://localhost:27017/shopping-mall-db` |
 | `JWT_SECRET` | JWT 서명 시크릿 | `change-me` |
-| `JWT_EXPIRES_IN` | JWT 만료 시간 | `7d` |
+| `ACCESS_TOKEN_EXPIRES_IN` | Access Token 만료 시간 (예: `15m`) | `15m` |
+| `REFRESH_TOKEN_EXPIRES_IN` | Refresh Token 만료 시간 (예: `7d`) | `7d` |
 
 ## API 엔드포인트
 
 - `GET /` : API 상태 확인
 - `GET /health` : 서버 및 데이터베이스 상태 확인
 - `POST /api/users/register` : 이메일 기반 회원가입
-- `POST /api/users/login` : 이메일/비밀번호 로그인
+- `POST /api/users/login` : 이메일/비밀번호 로그인 (Access Token + Refresh Token 발급)
+- `POST /api/users/token/refresh` : Refresh Token으로 Access Token 재발급
 
 ## 프로젝트 구조
 

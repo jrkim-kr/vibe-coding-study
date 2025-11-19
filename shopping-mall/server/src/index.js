@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 
 // 환경 변수 로드
@@ -15,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors()); // CORS 설정 - 모든 도메인에서 접근 허용
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // MongoDB 연결
 const MONGODB_URI =

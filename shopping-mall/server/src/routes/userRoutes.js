@@ -1,5 +1,9 @@
 import express from "express";
-import { register, login } from "../controllers/userController.js";
+import {
+  register,
+  login,
+  refreshAccessToken,
+} from "../controllers/userController.js";
 
 const router = express.Router();
 
@@ -8,5 +12,8 @@ router.post("/register", register);
 
 // 로그인
 router.post("/login", login);
+
+// Access Token 재발급
+router.post("/token/refresh", refreshAccessToken);
 
 export default router;

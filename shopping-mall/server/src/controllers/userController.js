@@ -1,9 +1,12 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import User from "../models/User.js";
+import RefreshToken from "../models/RefreshToken.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || "15m";
+const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || "7d";
 
 const buildUserResponse = (user) => ({
   _id: user._id,
@@ -15,7 +18,7 @@ const buildUserResponse = (user) => ({
   updatedAt: user.updatedAt,
 });
 
-const createToken = (user) =>
+const buildAccessToken = (user) =>
   jwt.sign(
     {
       userId: user._id,
@@ -23,8 +26,67 @@ const createToken = (user) =>
       email: user.email,
     },
     JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
+    { expiresIn: ACCESS_TOKEN_EXPIRES_IN }
   );
+
+const hashToken = (token) =>
+  crypto.createHash("sha256").update(token).digest("hex");
+
+const parseDurationToMs = (duration) => {
+  if (typeof duration === "number") return duration;
+  const match = /^(\d+)([smhd])$/.exec(duration);
+  if (!match) {
+    // fallback 1 day
+    return 24 * 60 * 60 * 1000;
+  }
+  const value = parseInt(match[1], 10);
+  const unit = match[2];
+  switch (unit) {
+    case "s":
+      return value * 1000;
+    case "m":
+      return value * 60 * 1000;
+    case "h":
+      return value * 60 * 60 * 1000;
+    case "d":
+      return value * 24 * 60 * 60 * 1000;
+    default:
+      return value;
+  }
+};
+
+const refreshTokenMaxAgeMs = parseDurationToMs(REFRESH_TOKEN_EXPIRES_IN);
+
+const createAndStoreRefreshToken = async (userId) => {
+  const refreshToken = crypto.randomBytes(40).toString("hex");
+  const tokenHash = hashToken(refreshToken);
+  const expiresAt = new Date(Date.now() + refreshTokenMaxAgeMs);
+
+  await RefreshToken.create({
+    tokenHash,
+    user: userId,
+    expiresAt,
+  });
+
+  return { refreshToken, expiresAt };
+};
+
+const setRefreshCookie = (res, token) => {
+  res.cookie("refreshToken", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: refreshTokenMaxAgeMs,
+  });
+};
+
+const clearRefreshCookie = (res) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+};
 
 // 회원가입
 export const register = async (req, res) => {
@@ -139,17 +201,73 @@ export const login = async (req, res) => {
         .json({ error: "이메일 또는 비밀번호가 일치하지 않습니다." });
     }
 
-    const token = createToken(user);
+    const accessToken = buildAccessToken(user);
+
+    // 기존 refresh token 제거 후 재발급
+    await RefreshToken.deleteMany({ user: user._id });
+    const { refreshToken } = await createAndStoreRefreshToken(user._id);
+    setRefreshCookie(res, refreshToken);
 
     res.status(200).json({
       message: "로그인이 완료되었습니다.",
-      token,
+      token: accessToken,
       user: buildUserResponse(user),
     });
   } catch (error) {
     console.error("로그인 오류:", error);
     res.status(500).json({
       error: "로그인 중 오류가 발생했습니다.",
+      message: error.message,
+    });
+  }
+};
+
+// Access Token 재발급
+export const refreshAccessToken = async (req, res) => {
+  try {
+    const tokenFromCookie = req.cookies?.refreshToken;
+
+    if (!tokenFromCookie) {
+      return res.status(401).json({ error: "Refresh Token이 필요합니다." });
+    }
+
+    const tokenHash = hashToken(tokenFromCookie);
+    const storedToken = await RefreshToken.findOne({ tokenHash }).populate(
+      "user"
+    );
+
+    if (!storedToken || storedToken.expiresAt < new Date()) {
+      if (storedToken) {
+        await storedToken.deleteOne();
+      }
+      clearRefreshCookie(res);
+      return res
+        .status(401)
+        .json({ error: "Refresh Token이 유효하지 않습니다." });
+    }
+
+    const user = storedToken.user;
+    if (!user || user.isDeleted) {
+      await storedToken.deleteOne();
+      clearRefreshCookie(res);
+      return res.status(401).json({ error: "사용자 정보를 찾을 수 없습니다." });
+    }
+
+    // 토큰 회전
+    await storedToken.deleteOne();
+    const accessToken = buildAccessToken(user);
+    const { refreshToken } = await createAndStoreRefreshToken(user._id);
+    setRefreshCookie(res, refreshToken);
+
+    return res.status(200).json({
+      message: "토큰이 재발급되었습니다.",
+      token: accessToken,
+    });
+  } catch (error) {
+    console.error("토큰 재발급 오류:", error);
+    clearRefreshCookie(res);
+    res.status(500).json({
+      error: "토큰 재발급 중 오류가 발생했습니다.",
       message: error.message,
     });
   }

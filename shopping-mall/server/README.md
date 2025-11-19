@@ -18,10 +18,10 @@ npm install
 
 2. 환경 변수 설정:
 ```bash
-cp .env.example .env
+cp env.example .env
 ```
 
-3. `.env` 파일을 열어 MongoDB 연결 정보를 설정하세요.
+3. `.env` 파일을 열어 MongoDB 및 JWT 설정을 구성하세요.
 
 ## 실행 방법
 
@@ -35,10 +35,23 @@ npm run dev
 npm start
 ```
 
+## 환경 변수
+
+`.env` 파일에서 다음 값을 설정할 수 있습니다.
+
+| 변수 | 설명 | 기본값 |
+| --- | --- | --- |
+| `PORT` | 서버 포트 | `5000` |
+| `MONGODB_URI` | MongoDB 연결 URI | `mongodb://localhost:27017/shopping-mall-db` |
+| `JWT_SECRET` | JWT 서명 시크릿 | `change-me` |
+| `JWT_EXPIRES_IN` | JWT 만료 시간 | `7d` |
+
 ## API 엔드포인트
 
-- `GET /`: API 상태 확인
-- `GET /health`: 서버 및 데이터베이스 상태 확인
+- `GET /` : API 상태 확인
+- `GET /health` : 서버 및 데이터베이스 상태 확인
+- `POST /api/users/register` : 이메일 기반 회원가입
+- `POST /api/users/login` : 이메일/비밀번호 로그인
 
 ## 프로젝트 구조
 

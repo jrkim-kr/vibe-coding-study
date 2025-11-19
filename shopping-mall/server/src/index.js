@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import userRoutes from "./routes/userRoutes.js";
 
 // 환경 변수 로드
 dotenv.config();
@@ -48,6 +49,9 @@ app.get("/health", (req, res) => {
       mongoose.connection.readyState === 1 ? "connected" : "disconnected",
   });
 });
+
+// API 라우트
+app.use("/api/users", userRoutes);
 
 // MongoDB 연결 상태 확인
 mongoose.connection.on("connected", () => {

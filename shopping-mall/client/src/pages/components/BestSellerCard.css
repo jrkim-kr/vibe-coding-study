@@ -1,0 +1,104 @@
+.cu-best-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.08);
+}
+
+.cu-best-image {
+  position: relative;
+  padding-top: 120%;
+}
+
+.cu-best-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cu-best-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  text-align: center;
+  text-transform: lowercase;
+  background: rgba(24, 21, 17, 0.28);
+}
+
+.cu-thermo-icon {
+  width: 34px;
+  height: 34px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  position: relative;
+}
+
+.cu-thermo-icon::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+
+.cu-best-overlay-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cu-best-overlay-desc {
+  font-size: 14px;
+}
+
+.cu-best-body {
+  padding: 18px 20px 26px;
+}
+
+.cu-color-dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.cu-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.cu-best-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.cu-best-price {
+  font-size: 14px;
+  color: #7c7973;
+}
+
+.cu-best-final {
+  color: #b24c3a;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.cu-best-review {
+  color: #7c7973;
+}
+

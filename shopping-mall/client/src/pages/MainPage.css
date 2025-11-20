@@ -1,0 +1,505 @@
+:root {
+  --bg-primary: #f7f4ec;
+  --text-dark: #1f1a17;
+  --text-muted: #7c7973;
+  --border-color: #e1dbd0;
+  --accent-green: #3abf4e;
+  --accent-yellow: #ffe918;
+}
+
+.main-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-dark);
+  padding: 32px clamp(16px, 4vw, 56px) 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  margin-bottom: 32px;
+}
+
+.cu-nav {
+  display: flex;
+  gap: 24px;
+}
+
+.cu-nav a {
+  font-weight: 500;
+}
+
+.cu-logo {
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 600;
+  letter-spacing: 0.6em;
+}
+
+.cu-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cu-actions button {
+  border: none;
+  background: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.cu-search-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-right: 16px;
+}
+
+.cu-search-line {
+  width: clamp(80px, 10vw, 140px);
+  border-bottom: 1px solid var(--text-dark);
+  display: block;
+  transform: translateY(6px);
+}
+
+.cu-icon {
+  width: 24px;
+  height: 24px;
+  stroke: var(--text-dark);
+  stroke-width: 1.8;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cu-icon-btn {
+  margin-left: 12px;
+}
+
+.cu-icon-cart {
+  position: relative;
+}
+
+.icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 11px;
+  background: #000;
+  color: #fff;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cu-hero {
+  position: relative;
+  height: clamp(360px, 60vw, 520px);
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 56px;
+}
+
+.cu-hero-image {
+  width: 100%;
+  height: 100%;
+  background: url("https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80")
+    center/cover no-repeat;
+  filter: grayscale(10%);
+}
+
+.cu-hero-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(247, 244, 236, 0.35);
+}
+
+.cu-hero-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(24px, 6vw, 72px);
+  color: white;
+  mix-blend-mode: screen;
+}
+
+.cu-hero-caption {
+  font-family: "Courier New", monospace;
+  font-size: clamp(12px, 1.8vw, 18px);
+  transform: rotate(-12deg);
+  margin-bottom: clamp(20px, 5vw, 60px);
+}
+
+.cu-hero-green {
+  font-size: clamp(36px, 7vw, 90px);
+  font-weight: 700;
+  color: var(--accent-green);
+  text-transform: lowercase;
+  line-height: 1;
+}
+
+.cu-hero-white {
+  font-size: clamp(28px, 6vw, 72px);
+  font-weight: 600;
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+}
+
+.cu-hero-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px white;
+  margin-top: 8px;
+}
+
+.cu-section {
+  border-top: 1px solid var(--border-color);
+  padding-top: 32px;
+  margin-bottom: 48px;
+}
+
+.cu-best-section {
+  padding-top: 0;
+  border-top: none;
+  margin-top: -8px;
+}
+
+.cu-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.cu-section-label {
+  font-size: 18px;
+  letter-spacing: 0.4em;
+  margin-bottom: 8px;
+}
+
+.cu-section-desc {
+  color: var(--text-muted);
+  font-size: 15px;
+  max-width: 380px;
+  line-height: 1.6;
+}
+
+.cu-section-link {
+  font-size: 14px;
+  letter-spacing: 0.4em;
+}
+
+.cu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
+}
+
+.cu-card {
+  background: #fffdfa;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 30px rgba(56, 33, 16, 0.08);
+}
+
+.cu-card-image {
+  position: relative;
+  padding-top: 125%;
+  overflow: hidden;
+}
+
+.cu-card-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cu-palette {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  display: flex;
+  gap: 6px;
+}
+
+.cu-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.cu-card-body {
+  padding: 18px 20px 24px;
+  font-size: 14px;
+  color: #423c35;
+}
+
+.cu-card-title {
+  font-size: 15px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.cu-card-price {
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.cu-card-final {
+  color: #b24c3a;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.cu-card-review {
+  color: var(--text-muted);
+}
+
+.cu-best-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.cu-best-card {
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 25px rgba(0, 0, 0, 0.08);
+}
+
+.cu-best-image {
+  position: relative;
+  padding-top: 120%;
+}
+
+.cu-best-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cu-best-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  text-align: center;
+  text-transform: lowercase;
+  background: rgba(24, 21, 17, 0.28);
+}
+
+.cu-thermo-icon {
+  width: 34px;
+  height: 34px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  position: relative;
+}
+
+.cu-thermo-icon::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+
+.cu-best-overlay-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cu-best-overlay-desc {
+  font-size: 14px;
+}
+
+.cu-best-body {
+  padding: 18px 20px 26px;
+}
+
+.cu-color-dots {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.cu-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.cu-best-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.cu-best-price {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.cu-best-final {
+  color: #b24c3a;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.cu-best-review {
+  color: var(--text-muted);
+}
+
+.cu-footer {
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.cu-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.cu-footer-title {
+  font-size: 13px;
+  letter-spacing: 0.4em;
+  margin-bottom: 12px;
+  color: var(--text-dark);
+}
+
+.cu-footer-column a {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.cu-footer-info {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.cu-chat-btn {
+  position: fixed;
+  right: 32px;
+  bottom: 40px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent-yellow);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+}
+
+.cu-chat-btn span {
+  width: 20px;
+  height: 14px;
+  border: 2px solid #000;
+  border-radius: 6px;
+  position: relative;
+}
+
+.cu-chat-btn span::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-bottom: 2px solid #000;
+  border-right: 2px solid #000;
+  bottom: -6px;
+  left: 4px;
+  transform: rotate(45deg);
+  background: var(--accent-yellow);
+}
+
+.cu-floating {
+  position: fixed;
+  right: 36px;
+  bottom: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cu-floating-icon {
+  width: 48px;
+  height: 48px;
+  background: white;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 960px) {
+  .cu-header {
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .cu-section-header {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .cu-logo {
+    letter-spacing: 0.3em;
+  }
+
+  .cu-hero-text {
+    mix-blend-mode: normal;
+  }
+
+  .cu-footer-grid {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+
+  .cu-floating,
+  .cu-chat-btn {
+    right: 20px;
+  }
+}

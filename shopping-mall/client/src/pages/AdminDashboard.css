@@ -1,0 +1,149 @@
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.admin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 240px;
+}
+
+.admin-header {
+  background: white;
+  padding: 20px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.admin-logo {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.6em;
+  color: #1f1a17;
+}
+
+.admin-console-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  margin: 0;
+}
+
+.admin-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+.admin-user-icon {
+  width: 20px;
+  height: 20px;
+  color: #666;
+}
+
+.admin-content {
+  padding: 32px;
+  flex: 1;
+}
+
+.admin-page-header {
+  margin-bottom: 32px;
+}
+
+.admin-page-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1f1a17;
+  margin: 0 0 8px 0;
+}
+
+.admin-page-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.admin-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.admin-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.admin-chart-card,
+.admin-sales-card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.admin-chart-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f1a17;
+  margin: 0 0 20px 0;
+}
+
+.admin-chart-placeholder {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+  border-radius: 4px;
+  color: #999;
+  font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+  .admin-main {
+    margin-left: 0;
+  }
+
+  .admin-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-content {
+    padding: 20px;
+  }
+
+  .admin-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-header {
+    padding: 16px 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .admin-logo {
+    font-size: 14px;
+    letter-spacing: 0.3em;
+  }
+
+  .admin-console-title {
+    font-size: 14px;
+  }
+}
+

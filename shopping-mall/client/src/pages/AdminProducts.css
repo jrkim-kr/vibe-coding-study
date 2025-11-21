@@ -1,0 +1,260 @@
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+  gap: 20px;
+}
+
+.admin-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #1f1a17;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-add-btn:hover {
+  background: #3a342f;
+}
+
+.admin-add-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.admin-products-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.admin-search-box {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.admin-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: #999;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 10px 12px 10px 40px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.admin-search-input:focus {
+  outline: none;
+  border-color: #1f1a17;
+}
+
+.admin-products-count {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.admin-products-table-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.admin-products-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-products-table thead {
+  background: #f9f9f9;
+  border-bottom: 2px solid #e5e5e5;
+}
+
+.admin-products-table th {
+  padding: 16px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-products-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+
+.admin-products-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.admin-product-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f5f5f5;
+}
+
+.admin-product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-product-name {
+  font-weight: 500;
+  color: #1f1a17;
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+.admin-product-category {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.admin-product-price {
+  font-weight: 600;
+  color: #1f1a17;
+}
+
+.admin-product-stock {
+  color: #666;
+}
+
+.admin-product-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.admin-product-status.status-active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.admin-product-status.status-inactive {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.admin-product-status.status-out {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.admin-product-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-action-btn {
+  padding: 6px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: white;
+}
+
+.admin-edit-btn {
+  color: #1f1a17;
+}
+
+.admin-edit-btn:hover {
+  background: #f5f5f5;
+  border-color: #1f1a17;
+}
+
+.admin-delete-btn {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.admin-delete-btn:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.admin-empty-state {
+  text-align: center;
+  padding: 60px 20px !important;
+  color: #999;
+  font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+  .admin-products-table {
+    font-size: 12px;
+  }
+
+  .admin-products-table th,
+  .admin-products-table td {
+    padding: 12px 8px;
+  }
+
+  .admin-product-name {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-add-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-products-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-search-box {
+    max-width: 100%;
+  }
+
+  .admin-products-table-container {
+    overflow-x: auto;
+  }
+
+  .admin-products-table {
+    min-width: 800px;
+  }
+}
+

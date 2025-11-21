@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import ProductCard from "./components/ProductCard";
-import BestSellerCard from "./components/BestSellerCard";
-import SectionHeader from "./components/SectionHeader";
-import FooterColumn from "./components/FooterColumn";
+import ProductCard from "../components/ProductCard";
+import BestSellerCard from "../components/BestSellerCard";
+import SectionHeader from "../components/SectionHeader";
+import FooterColumn from "../components/FooterColumn";
 import { newArrivals, bestSellers } from "../data/products.js";
 import "./MainPage.css";
 

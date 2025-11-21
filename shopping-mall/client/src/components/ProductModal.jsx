@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ImageUploader from "./ImageUploader";
 import "./ProductModal.css";
 
 function ProductModal({ product, categories, statuses, onSave, onClose }) {
@@ -8,7 +9,7 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
     price: "",
     stock: "",
     description: "",
-    images: [""],
+    images: [],
     status: statuses[0] || "",
   });
 
@@ -22,7 +23,7 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
         description: product.description || "",
         images: product.images && product.images.length > 0 
           ? product.images 
-          : [""],
+          : [],
         status: product.status || statuses[0] || "",
       });
     }
@@ -36,40 +37,27 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
     }));
   };
 
-  const handleImageChange = (index, value) => {
-    const newImages = [...formData.images];
-    newImages[index] = value;
+  const handleImagesChange = (images) => {
     setFormData((prev) => ({
       ...prev,
-      images: newImages,
+      images: images,
     }));
-  };
-
-  const handleAddImage = () => {
-    setFormData((prev) => ({
-      ...prev,
-      images: [...prev.images, ""],
-    }));
-  };
-
-  const handleRemoveImage = (index) => {
-    if (formData.images.length > 1) {
-      const newImages = formData.images.filter((_, i) => i !== index);
-      setFormData((prev) => ({
-        ...prev,
-        images: newImages,
-      }));
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
+    // 이미지가 최소 1개는 있어야 함
+    if (formData.images.length === 0) {
+      alert("최소 1개의 이미지를 업로드해주세요.");
+      return;
+    }
+    
     const productData = {
       ...formData,
       price: parseInt(formData.price),
       stock: parseInt(formData.stock),
-      images: formData.images.filter((img) => img.trim() !== ""),
+      images: formData.images,
     };
 
     if (product) {
@@ -201,36 +189,13 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
 
           <div className="product-form-group">
             <label className="product-form-label">
-              이미지 URL <span className="required">*</span>
+              상품 이미지 <span className="required">*</span>
             </label>
-            {formData.images.map((image, index) => (
-              <div key={index} className="product-image-input-group">
-                <input
-                  type="url"
-                  value={image}
-                  onChange={(e) => handleImageChange(index, e.target.value)}
-                  className="product-form-input"
-                  placeholder="https://example.com/image.jpg"
-                  required={index === 0}
-                />
-                {formData.images.length > 1 && (
-                  <button
-                    type="button"
-                    className="product-image-remove"
-                    onClick={() => handleRemoveImage(index)}
-                  >
-                    삭제
-                  </button>
-                )}
-              </div>
-            ))}
-            <button
-              type="button"
-              className="product-image-add"
-              onClick={handleAddImage}
-            >
-              + 이미지 추가
-            </button>
+            <ImageUploader
+              images={formData.images}
+              onChange={handleImagesChange}
+              maxImages={5}
+            />
           </div>
 
           <div className="product-modal-actions">

@@ -15,16 +15,32 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
 
   useEffect(() => {
     if (product) {
+      // product.category가 객체인 경우 name 추출
+      const categoryName =
+        typeof product.category === "string"
+          ? product.category
+          : product.category?.name || categories[0] || "";
+
       setFormData({
         name: product.name || "",
-        category: product.category || categories[0] || "",
+        category: categoryName,
         price: product.price || "",
         stock: product.stock || "",
         description: product.description || "",
-        images: product.images && product.images.length > 0 
-          ? product.images 
-          : [],
+        images:
+          product.images && product.images.length > 0 ? product.images : [],
         status: product.status || statuses[0] || "",
+      });
+    } else {
+      // 새 상품 등록 시 초기화
+      setFormData({
+        name: "",
+        category: categories[0] || "",
+        price: "",
+        stock: "",
+        description: "",
+        images: [],
+        status: statuses[0] || "",
       });
     }
   }, [product, categories, statuses]);
@@ -46,19 +62,24 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // 이미지가 최소 1개는 있어야 함
     if (formData.images.length === 0) {
       alert("최소 1개의 이미지를 업로드해주세요.");
       return;
     }
-    
+
     const productData = {
-      ...formData,
+      name: formData.name.trim(),
+      category: formData.category,
       price: parseInt(formData.price),
       stock: parseInt(formData.stock),
-      images: formData.images,
+      description: formData.description || "",
+      images: formData.images || [],
+      status: formData.status || "판매중",
     };
+
+    console.log("상품 데이터 전송:", productData);
 
     if (product) {
       productData.id = product.id;
@@ -115,13 +136,23 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
                 onChange={handleChange}
                 className="product-form-select"
                 required
+                disabled={categories.length === 0}
               >
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
+                {categories.length === 0 ? (
+                  <option value="">카테고리를 먼저 등록해주세요</option>
+                ) : (
+                  categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))
+                )}
               </select>
+              {categories.length === 0 && (
+                <p style={{ color: "#f59e0b", fontSize: "12px", marginTop: "4px" }}>
+                  카테고리 관리 페이지에서 카테고리를 먼저 등록해주세요.
+                </p>
+              )}
             </div>
 
             <div className="product-form-group">
@@ -217,4 +248,3 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
 }
 
 export default ProductModal;
-

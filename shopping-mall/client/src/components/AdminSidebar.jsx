@@ -9,7 +9,7 @@ const menuItems = [
   { id: "customers", label: "Customers", icon: "users", path: "/admin/customers" },
 ];
 
-function AdminSidebar({ activeMenu, setActiveMenu }) {
+function AdminSidebar({ activeMenu, setActiveMenu, isOpen, onClose }) {
   const navigate = useNavigate();
   const getIcon = (iconName) => {
     switch (iconName) {
@@ -101,11 +101,34 @@ function AdminSidebar({ activeMenu, setActiveMenu }) {
   const handleMenuClick = (item) => {
     setActiveMenu(item.id);
     navigate(item.path);
+    // 모바일에서 메뉴 클릭 시 사이드바 닫기
+    if (onClose && window.innerWidth <= 1024) {
+      onClose();
+    }
   };
 
   return (
-    <aside className="admin-sidebar">
-      <nav className="admin-nav">
+    <>
+      {/* 오버레이 (모바일에서 사이드바 외부 클릭 시 닫기) */}
+      {isOpen && (
+        <div className="admin-sidebar-overlay" onClick={onClose} />
+      )}
+      <aside className={`admin-sidebar ${isOpen ? "open" : ""}`}>
+        {/* 닫기 버튼 (모바일에서만 표시) */}
+        <button className="admin-sidebar-close" onClick={onClose}>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <nav className="admin-nav">
         {menuItems.map((item) => (
           <button
             key={item.id}
@@ -120,6 +143,7 @@ function AdminSidebar({ activeMenu, setActiveMenu }) {
         ))}
       </nav>
     </aside>
+    </>
   );
 }
 

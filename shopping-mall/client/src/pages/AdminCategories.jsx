@@ -1,75 +1,21 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminHeader from "../components/AdminHeader";
 import CategoryModal from "../components/CategoryModal";
+import { categoryAPI } from "../utils/api";
 import "./AdminCategories.css";
-
-const initialCategories = [
-  {
-    id: 1,
-    name: "아우터",
-    parentCategory: null,
-    sortOrder: 1,
-    productCount: 12,
-  },
-  {
-    id: 2,
-    name: "니트",
-    parentCategory: null,
-    sortOrder: 2,
-    productCount: 8,
-  },
-  {
-    id: 3,
-    name: "상의",
-    parentCategory: null,
-    sortOrder: 3,
-    productCount: 25,
-  },
-  {
-    id: 4,
-    name: "하의",
-    parentCategory: null,
-    sortOrder: 4,
-    productCount: 18,
-  },
-  {
-    id: 5,
-    name: "액세서리",
-    parentCategory: null,
-    sortOrder: 5,
-    productCount: 15,
-  },
-  {
-    id: 6,
-    name: "자켓",
-    parentCategory: "아우터",
-    sortOrder: 1,
-    productCount: 5,
-  },
-  {
-    id: 7,
-    name: "코트",
-    parentCategory: "아우터",
-    sortOrder: 2,
-    productCount: 4,
-  },
-  {
-    id: 8,
-    name: "가디건",
-    parentCategory: "니트",
-    sortOrder: 1,
-    productCount: 6,
-  },
-];
 
 function AdminCategories() {
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState("categories");
-  const [categories, setCategories] = useState(initialCategories);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // URL 경로에 따라 activeMenu 설정
@@ -87,6 +33,51 @@ function AdminCategories() {
     }
   }, [location.pathname]);
 
+  // 화면 크기가 1024px보다 클 때는 사이드바를 항상 열어둠
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    // 초기 설정
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    loadCategories();
+  }, [searchTerm]);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const loadCategories = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const params = {};
+      if (searchTerm) {
+        params.search = searchTerm;
+      }
+
+      const response = await categoryAPI.getCategories(params);
+      setCategories(response.categories || []);
+    } catch (err) {
+      console.error("카테고리 목록 로드 오류:", err);
+      setError(err.message || "카테고리 목록을 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleAddCategory = () => {
     setEditingCategory(null);
     setIsModalOpen(true);
@@ -97,50 +88,58 @@ function AdminCategories() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteCategory = (id) => {
-    if (window.confirm("정말 이 카테고리를 삭제하시겠습니까?")) {
-      setCategories(categories.filter((c) => c.id !== id));
+  const handleDeleteCategory = async (id) => {
+    if (!window.confirm("정말 이 카테고리를 삭제하시겠습니까?")) {
+      return;
+    }
+
+    try {
+      await categoryAPI.deleteCategory(id);
       alert("카테고리가 삭제되었습니다.");
+      loadCategories(); // 목록 새로고침
+    } catch (err) {
+      alert(err.message || "카테고리 삭제 중 오류가 발생했습니다.");
     }
   };
 
-  const handleSaveCategory = (categoryData) => {
-    if (editingCategory) {
-      // 수정
-      setCategories(
-        categories.map((c) =>
-          c.id === editingCategory.id ? categoryData : c
-        )
-      );
-      alert("카테고리가 수정되었습니다.");
-    } else {
-      // 등록
-      const newCategory = {
-        ...categoryData,
-        id: Math.max(...categories.map((c) => c.id), 0) + 1,
-        productCount: 0,
-      };
-      setCategories([...categories, newCategory]);
-      alert("카테고리가 등록되었습니다.");
+  const handleSaveCategory = async (categoryData) => {
+    try {
+      console.log("카테고리 저장 시도:", categoryData);
+      if (editingCategory) {
+        // 수정
+        await categoryAPI.updateCategory(editingCategory._id || editingCategory.id, categoryData);
+        alert("카테고리가 수정되었습니다.");
+      } else {
+        // 등록
+        const response = await categoryAPI.createCategory(categoryData);
+        console.log("카테고리 등록 응답:", response);
+        alert("카테고리가 등록되었습니다.");
+      }
+      setIsModalOpen(false);
+      setEditingCategory(null);
+      loadCategories(); // 목록 새로고침
+    } catch (err) {
+      console.error("카테고리 저장 오류 상세:", err);
+      alert(err.message || "카테고리 저장 중 오류가 발생했습니다.");
     }
-    setIsModalOpen(false);
-    setEditingCategory(null);
   };
 
   // 상위 카테고리 목록 (parentCategory가 null인 것만)
-  const parentCategories = categories.filter((c) => !c.parentCategory);
-
-  const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const parentCategories = categories.filter(
+    (c) => !c.parentCategory || !c.parentCategoryId
   );
 
   // 상위 카테고리별로 그룹화
-  const groupedCategories = filteredCategories.reduce((acc, category) => {
-    const parent = category.parentCategory || "상위 카테고리 없음";
-    if (!acc[parent]) {
-      acc[parent] = [];
+  const groupedCategories = categories.reduce((acc, category) => {
+    const parentName = category.parentCategoryName || 
+                      (category.parentCategory?.name) ||
+                      (category.parentCategoryId ? "하위 카테고리" : null) ||
+                      "상위 카테고리 없음";
+    
+    if (!acc[parentName]) {
+      acc[parentName] = [];
     }
-    acc[parent].push(category);
+    acc[parentName].push(category);
     return acc;
   }, {});
 
@@ -153,27 +152,17 @@ function AdminCategories() {
 
   return (
     <div className="admin-container">
-      <AdminSidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+      <AdminSidebar
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
       <div className="admin-main">
-        <header className="admin-header">
-          <h1 className="admin-logo">COMMON UNIQUE</h1>
-          <h2 className="admin-console-title">Admin Console</h2>
-          <div className="admin-user">
-            <svg
-              className="admin-user-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4.5 20c2-3 4.5-4.5 7.5-4.5s5.5 1.5 7.5 4.5" />
-            </svg>
-            <span>admin@common-unique.com</span>
-          </div>
-        </header>
+        <AdminHeader
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={toggleSidebar}
+        />
 
         <div className="admin-content">
           <div className="admin-page-header">
@@ -222,13 +211,21 @@ function AdminCategories() {
               />
             </div>
             <div className="admin-categories-count">
-              총 {filteredCategories.length}개
+              총 {categories.length}개
             </div>
           </div>
 
+          {error && (
+            <div className="admin-error-message">{error}</div>
+          )}
+
           <div className="admin-categories-container">
-            {sortedGroups.length === 0 ? (
-              <div className="admin-empty-state">검색 결과가 없습니다</div>
+            {loading ? (
+              <div className="admin-loading">로딩 중...</div>
+            ) : sortedGroups.length === 0 ? (
+              <div className="admin-empty-state">
+                {searchTerm ? "검색 결과가 없습니다" : "등록된 카테고리가 없습니다"}
+              </div>
             ) : (
               sortedGroups.map((parentName) => (
                 <div key={parentName} className="admin-category-group">
@@ -248,47 +245,54 @@ function AdminCategories() {
                       </thead>
                       <tbody>
                         {groupedCategories[parentName]
-                          .sort((a, b) => a.sortOrder - b.sortOrder)
-                          .map((category) => (
-                            <tr key={category.id}>
-                              <td>
-                                <div className="admin-category-name">
-                                  {category.name}
-                                </div>
-                              </td>
-                              <td>
-                                <span className="admin-category-parent">
-                                  {category.parentCategory || "-"}
-                                </span>
-                              </td>
-                              <td>
-                                <span className="admin-category-sort">
-                                  {category.sortOrder}
-                                </span>
-                              </td>
-                              <td>
-                                <span className="admin-category-count">
-                                  {category.productCount}개
-                                </span>
-                              </td>
-                              <td>
-                                <div className="admin-category-actions">
-                                  <button
-                                    className="admin-action-btn admin-edit-btn"
-                                    onClick={() => handleEditCategory(category)}
-                                  >
-                                    수정
-                                  </button>
-                                  <button
-                                    className="admin-action-btn admin-delete-btn"
-                                    onClick={() => handleDeleteCategory(category.id)}
-                                  >
-                                    삭제
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
+                          .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+                          .map((category) => {
+                            const categoryId = category._id || category.id;
+                            const parentName = category.parentCategoryName || 
+                                             (category.parentCategory?.name) || 
+                                             "-";
+                            
+                            return (
+                              <tr key={categoryId}>
+                                <td>
+                                  <div className="admin-category-name">
+                                    {category.name}
+                                  </div>
+                                </td>
+                                <td>
+                                  <span className="admin-category-parent">
+                                    {parentName}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className="admin-category-sort">
+                                    {category.sortOrder || 0}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span className="admin-category-count">
+                                    {category.productCount || 0}개
+                                  </span>
+                                </td>
+                                <td>
+                                  <div className="admin-category-actions">
+                                    <button
+                                      className="admin-action-btn admin-edit-btn"
+                                      onClick={() => handleEditCategory(category)}
+                                    >
+                                      수정
+                                    </button>
+                                    <button
+                                      className="admin-action-btn admin-delete-btn"
+                                      onClick={() => handleDeleteCategory(categoryId)}
+                                    >
+                                      삭제
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
                       </tbody>
                     </table>
                   </div>
@@ -315,4 +319,3 @@ function AdminCategories() {
 }
 
 export default AdminCategories;
-

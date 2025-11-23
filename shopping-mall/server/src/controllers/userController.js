@@ -5,7 +5,7 @@ import User from "../models/User.js";
 import RefreshToken from "../models/RefreshToken.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
-const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || "15m";
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || "24h"; // 개발 환경에서는 24시간으로 연장
 const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || "7d";
 
 const buildUserResponse = (user) => ({

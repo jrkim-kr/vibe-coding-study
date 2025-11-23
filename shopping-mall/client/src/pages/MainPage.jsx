@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import BestSellerCard from "../components/BestSellerCard";
@@ -8,6 +9,36 @@ import "./MainPage.css";
 
 function MainPage() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("authToken");
+      const userStr = localStorage.getItem("currentUser");
+
+      if (token && userStr) {
+        try {
+          const userData = JSON.parse(userStr);
+          console.log("사용자 정보:", userData); // 디버깅용
+          setUser(userData);
+          setIsLoggedIn(true);
+        } catch (error) {
+          console.error("사용자 정보 파싱 오류:", error);
+        }
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("currentUser");
+    setUser(null);
+    setIsLoggedIn(false);
+    navigate("/");
+  };
 
   return (
     <div className="main-page">
@@ -33,23 +64,65 @@ function MainPage() {
               </svg>
             </button>
           </div>
-          <button
-            type="button"
-            className="cu-icon-btn"
-            aria-label="로그인 페이지 이동"
-            onClick={() => navigate("/login")}
-            title="로그인"
-          >
-            <svg
-              className="cu-icon"
-              viewBox="0 0 24 24"
-              role="img"
-              aria-hidden="true"
+          {isLoggedIn ? (
+            <>
+              {user?.role === "admin" ? (
+                <>
+                  <button
+                    type="button"
+                    className="cu-admin-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("관리자 버튼 클릭됨, 이동:", "/admin");
+                      navigate("/admin");
+                    }}
+                    title="관리자 페이지"
+                  >
+                    어드민
+                  </button>
+                  <button
+                    type="button"
+                    className="cu-logout-btn"
+                    onClick={handleLogout}
+                    title="로그아웃"
+                  >
+                    로그아웃
+                  </button>
+                </>
+              ) : (
+                <div className="cu-user-menu">
+                  <span className="cu-user-name">{user?.name || "사용자"}</span>
+                  <button
+                    type="button"
+                    className="cu-logout-btn"
+                    onClick={handleLogout}
+                    title="로그아웃"
+                  >
+                    로그아웃
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <button
+              type="button"
+              className="cu-icon-btn"
+              aria-label="로그인 페이지 이동"
+              onClick={() => navigate("/login")}
+              title="로그인"
             >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4.5 20c2-3 4.5-4.5 7.5-4.5s5.5 1.5 7.5 4.5" />
-            </svg>
-          </button>
+              <svg
+                className="cu-icon"
+                viewBox="0 0 24 24"
+                role="img"
+                aria-hidden="true"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4.5 20c2-3 4.5-4.5 7.5-4.5s5.5 1.5 7.5 4.5" />
+              </svg>
+            </button>
+          )}
           <button
             type="button"
             className="cu-icon-btn cu-icon-cart"

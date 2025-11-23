@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminHeader from "../components/AdminHeader";
 import KPICard from "../components/KPICard";
 import RecentSales from "../components/RecentSales";
 import "./AdminDashboard.css";
@@ -8,6 +9,7 @@ import "./AdminDashboard.css";
 function AdminDashboard() {
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState("dashboard");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     // URL 경로에 따라 activeMenu 설정
@@ -25,29 +27,40 @@ function AdminDashboard() {
     }
   }, [location.pathname]);
 
+  // 화면 크기가 1024px보다 클 때는 사이드바를 항상 열어둠
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    // 초기 설정
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <div className="admin-container">
-      <AdminSidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+      <AdminSidebar
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
       <div className="admin-main">
-        <header className="admin-header">
-          <h1 className="admin-logo">COMMON UNIQUE</h1>
-          <h2 className="admin-console-title">Admin Console</h2>
-          <div className="admin-user">
-            <svg
-              className="admin-user-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4.5 20c2-3 4.5-4.5 7.5-4.5s5.5 1.5 7.5 4.5" />
-            </svg>
-            <span>admin@common-unique.com</span>
-          </div>
-        </header>
+        <AdminHeader
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={toggleSidebar}
+        />
 
         <div className="admin-content">
           <div className="admin-page-header">

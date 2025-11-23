@@ -1,49 +1,41 @@
 import "./RecentSales.css";
 
-const salesData = [
-  {
-    id: 1,
-    initials: "OM",
-    name: "Olivia Martin",
-    email: "olivia.martin@email.com",
-    amount: "₩ 129,000",
-  },
-  {
-    id: 2,
-    initials: "JL",
-    name: "Jackson Lee",
-    email: "jackson.lee@email.com",
-    amount: "₩ 39,000",
-  },
-  {
-    id: 3,
-    initials: "IN",
-    name: "Isabella Nguyen",
-    email: "isabella.nguyen@email.com",
-    amount: "₩ 299,000",
-  },
-  {
-    id: 4,
-    initials: "WK",
-    name: "William Kim",
-    email: "will@email.com",
-    amount: "₩ 99,000",
-  },
-];
+function RecentSales({ sales = [] }) {
+  const getInitials = (name) => {
+    if (!name) return "??";
+    const parts = name.split(" ");
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
 
-function RecentSales() {
+  const formatAmount = (amount) => {
+    return `₩ ${amount.toLocaleString()}`;
+  };
+
+  if (sales.length === 0) {
+    return (
+      <div className="recent-sales">
+        <div className="recent-sales-empty">최근 판매 내역이 없습니다</div>
+      </div>
+    );
+  }
+
   return (
     <div className="recent-sales">
-      {salesData.map((sale) => (
-        <div key={sale.id} className="recent-sales-item">
+      {sales.map((sale) => (
+        <div key={sale.id || sale._id} className="recent-sales-item">
           <div className="recent-sales-avatar">
-            <span>{sale.initials}</span>
+            <span>{getInitials(sale.customerName)}</span>
           </div>
           <div className="recent-sales-info">
-            <div className="recent-sales-name">{sale.name}</div>
-            <div className="recent-sales-email">{sale.email}</div>
+            <div className="recent-sales-name">{sale.customerName || "고객"}</div>
+            <div className="recent-sales-email">{sale.customerEmail || ""}</div>
           </div>
-          <div className="recent-sales-amount">{sale.amount}</div>
+          <div className="recent-sales-amount">
+            {formatAmount(sale.amount || 0)}
+          </div>
         </div>
       ))}
     </div>

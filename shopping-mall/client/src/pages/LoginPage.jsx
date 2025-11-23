@@ -72,8 +72,22 @@ function LoginPage() {
         } else {
           localStorage.removeItem("savedEmail");
         }
-        localStorage.setItem("authToken", data.token);
-        localStorage.setItem("currentUser", JSON.stringify(data.user));
+        
+        // 토큰 저장
+        if (data.token) {
+          localStorage.setItem("authToken", data.token);
+          console.log("토큰 저장 완료:", data.token.substring(0, 20) + "...");
+        } else {
+          console.error("서버에서 토큰을 받지 못했습니다:", data);
+        }
+        
+        // 사용자 정보 저장
+        if (data.user) {
+          localStorage.setItem("currentUser", JSON.stringify(data.user));
+          console.log("사용자 정보 저장 완료:", data.user);
+        } else {
+          console.error("서버에서 사용자 정보를 받지 못했습니다:", data);
+        }
       }
 
       setSuccess("로그인이 완료되었습니다.");

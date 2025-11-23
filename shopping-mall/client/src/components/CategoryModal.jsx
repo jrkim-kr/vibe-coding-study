@@ -10,9 +10,21 @@ function CategoryModal({ category, parentCategories, onSave, onClose }) {
 
   useEffect(() => {
     if (category) {
+      // parentCategory가 객체인 경우 name 추출, 또는 ID인 경우 name 찾기
+      let parentCategoryName = "";
+      if (category.parentCategory) {
+        if (typeof category.parentCategory === "string") {
+          parentCategoryName = category.parentCategory;
+        } else if (category.parentCategory.name) {
+          parentCategoryName = category.parentCategory.name;
+        } else if (category.parentCategoryName) {
+          parentCategoryName = category.parentCategoryName;
+        }
+      }
+
       setFormData({
         name: category.name || "",
-        parentCategory: category.parentCategory || "",
+        parentCategory: parentCategoryName,
         sortOrder: category.sortOrder || 1,
       });
     } else {
@@ -35,17 +47,16 @@ function CategoryModal({ category, parentCategories, onSave, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // 서버로 보낼 데이터만 정리 (불필요한 필드 제거)
     const categoryData = {
-      ...formData,
-      parentCategory: formData.parentCategory || null,
+      name: formData.name.trim(),
+      parentCategory: formData.parentCategory && formData.parentCategory !== "" 
+        ? formData.parentCategory.trim() 
+        : null,
       sortOrder: parseInt(formData.sortOrder) || 1,
     };
 
-    if (category) {
-      categoryData.id = category.id;
-      categoryData.productCount = category.productCount;
-    }
-
+    console.log("카테고리 데이터 전송:", categoryData);
     onSave(categoryData);
   };
 
@@ -96,11 +107,15 @@ function CategoryModal({ category, parentCategories, onSave, onClose }) {
               className="category-form-select"
             >
               <option value="">상위 카테고리 없음</option>
-              {parentCategories.map((parent) => (
-                <option key={parent.id} value={parent.name}>
-                  {parent.name}
-                </option>
-              ))}
+              {parentCategories.map((parent) => {
+                const parentId = parent._id || parent.id;
+                const parentName = parent.name;
+                return (
+                  <option key={parentId} value={parentName}>
+                    {parentName}
+                  </option>
+                );
+              })}
             </select>
             <p className="category-form-help">
               하위 카테고리를 만들려면 상위 카테고리를 선택하세요

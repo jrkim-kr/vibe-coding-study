@@ -1,107 +1,21 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminHeader from "../components/AdminHeader";
+import { customerAPI } from "../utils/api";
 import "./AdminCustomers.css";
-
-const initialCustomers = [
-  {
-    id: 1,
-    name: "Olivia Martin",
-    email: "olivia.martin@email.com",
-    phone: "010-1234-5678",
-    joinDate: "2023-01-15",
-    lastLogin: "2024-01-20",
-    orderCount: 12,
-    totalSpent: 1250000,
-    status: "활성",
-  },
-  {
-    id: 2,
-    name: "Jackson Lee",
-    email: "jackson.lee@email.com",
-    phone: "010-2345-6789",
-    joinDate: "2023-03-22",
-    lastLogin: "2024-01-19",
-    orderCount: 8,
-    totalSpent: 890000,
-    status: "활성",
-  },
-  {
-    id: 3,
-    name: "Isabella Nguyen",
-    email: "isabella.nguyen@email.com",
-    phone: "010-3456-7890",
-    joinDate: "2023-05-10",
-    lastLogin: "2024-01-18",
-    orderCount: 25,
-    totalSpent: 3200000,
-    status: "활성",
-  },
-  {
-    id: 4,
-    name: "William Kim",
-    email: "will@email.com",
-    phone: "010-4567-8901",
-    joinDate: "2023-07-05",
-    lastLogin: "2023-12-15",
-    orderCount: 3,
-    totalSpent: 150000,
-    status: "비활성",
-  },
-  {
-    id: 5,
-    name: "Sophia Park",
-    email: "sophia.park@email.com",
-    phone: "010-5678-9012",
-    joinDate: "2023-09-18",
-    lastLogin: "2024-01-21",
-    orderCount: 18,
-    totalSpent: 2100000,
-    status: "활성",
-  },
-  {
-    id: 6,
-    name: "James Chen",
-    email: "james.chen@email.com",
-    phone: "010-6789-0123",
-    joinDate: "2023-11-30",
-    lastLogin: "2024-01-10",
-    orderCount: 5,
-    totalSpent: 450000,
-    status: "활성",
-  },
-  {
-    id: 7,
-    name: "Emma Wilson",
-    email: "emma.wilson@email.com",
-    phone: "010-7890-1234",
-    joinDate: "2022-12-20",
-    lastLogin: "2023-11-05",
-    orderCount: 2,
-    totalSpent: 98000,
-    status: "비활성",
-  },
-  {
-    id: 8,
-    name: "Michael Brown",
-    email: "michael.brown@email.com",
-    phone: "010-8901-2345",
-    joinDate: "2023-02-14",
-    lastLogin: "2024-01-22",
-    orderCount: 30,
-    totalSpent: 4500000,
-    status: "활성",
-  },
-];
 
 function AdminCustomers() {
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState("customers");
-  const [customers, setCustomers] = useState(initialCustomers);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("전체");
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     // URL 경로에 따라 activeMenu 설정
@@ -119,37 +33,92 @@ function AdminCustomers() {
     }
   }, [location.pathname]);
 
-  const handleViewDetail = (customer) => {
-    setSelectedCustomer(customer);
-    setShowDetailModal(true);
+  // 화면 크기가 1024px보다 클 때는 사이드바를 항상 열어둠
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 1024) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    // 초기 설정
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    loadCustomers();
+  }, [searchTerm, statusFilter]);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleStatusChange = (customerId, newStatus) => {
-    if (window.confirm(`회원 상태를 "${newStatus}"로 변경하시겠습니까?`)) {
-      setCustomers(
-        customers.map((c) =>
-          c.id === customerId ? { ...c, status: newStatus } : c
-        )
-      );
-      alert("회원 상태가 변경되었습니다.");
-      if (selectedCustomer && selectedCustomer.id === customerId) {
-        setSelectedCustomer({
-          ...selectedCustomer,
-          status: newStatus,
-        });
+  const loadCustomers = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const params = {
+        limit: 100,
+      };
+
+      if (searchTerm) {
+        params.search = searchTerm;
       }
+
+      if (statusFilter !== "전체") {
+        params.status = statusFilter;
+      }
+
+      const response = await customerAPI.getCustomers(params);
+      setCustomers(response.customers || []);
+    } catch (err) {
+      console.error("회원 목록 로드 오류:", err);
+      setError(err.message || "회원 목록을 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const filteredCustomers = customers.filter((customer) => {
-    const matchesSearch =
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.phone.includes(searchTerm);
-    const matchesStatus =
-      statusFilter === "전체" || customer.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const handleViewDetail = async (customer) => {
+    try {
+      // 회원 상세 정보 로드
+      const response = await customerAPI.getCustomerById(customer._id || customer.id);
+      // 서버는 customer 객체를 직접 반환
+      setSelectedCustomer(response || customer);
+      setShowDetailModal(true);
+    } catch (err) {
+      console.error("회원 상세 조회 오류:", err);
+      // 상세 조회 실패 시 기본 정보만 표시
+      setSelectedCustomer(customer);
+      setShowDetailModal(true);
+    }
+  };
+
+  const handleStatusChange = async (customerId, newStatus) => {
+    if (!window.confirm(`회원 상태를 "${newStatus}"로 변경하시겠습니까?`)) {
+      return;
+    }
+
+    try {
+      await customerAPI.updateCustomerStatus(customerId, newStatus);
+      alert("회원 상태가 변경되었습니다.");
+      loadCustomers(); // 목록 새로고침
+
+      // 모달이 열려있으면 선택된 회원도 업데이트
+      if (selectedCustomer && (selectedCustomer._id === customerId || selectedCustomer.id === customerId)) {
+        const updatedCustomer = await customerAPI.getCustomerById(customerId);
+        setSelectedCustomer(updatedCustomer || { ...selectedCustomer, status: newStatus });
+      }
+    } catch (err) {
+      alert(err.message || "회원 상태 변경 중 오류가 발생했습니다.");
+    }
+  };
 
   const getStatusClass = (status) => {
     return status === "활성" ? "status-active" : "status-inactive";
@@ -167,27 +136,17 @@ function AdminCustomers() {
 
   return (
     <div className="admin-container">
-      <AdminSidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
+      <AdminSidebar
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
       <div className="admin-main">
-        <header className="admin-header">
-          <h1 className="admin-logo">COMMON UNIQUE</h1>
-          <h2 className="admin-console-title">Admin Console</h2>
-          <div className="admin-user">
-            <svg
-              className="admin-user-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4.5 20c2-3 4.5-4.5 7.5-4.5s5.5 1.5 7.5 4.5" />
-            </svg>
-            <span>admin@common-unique.com</span>
-          </div>
-        </header>
+        <AdminHeader
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={toggleSidebar}
+        />
 
         <div className="admin-content">
           <div className="admin-page-header">
@@ -233,95 +192,112 @@ function AdminCustomers() {
               </select>
             </div>
             <div className="admin-customers-count">
-              총 {filteredCustomers.length}명
+              총 {customers.length}명
             </div>
           </div>
 
+          {error && (
+            <div className="admin-error-message">{error}</div>
+          )}
+
           <div className="admin-customers-table-container">
-            <table className="admin-customers-table">
-              <thead>
-                <tr>
-                  <th>이름</th>
-                  <th>이메일</th>
-                  <th>전화번호</th>
-                  <th>가입일</th>
-                  <th>최근 로그인</th>
-                  <th>주문 수</th>
-                  <th>총 구매금액</th>
-                  <th>상태</th>
-                  <th>작업</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCustomers.length === 0 ? (
+            {loading ? (
+              <div className="admin-loading">로딩 중...</div>
+            ) : (
+              <table className="admin-customers-table">
+                <thead>
                   <tr>
-                    <td colSpan="9" className="admin-empty-state">
-                      검색 결과가 없습니다
-                    </td>
+                    <th>이름</th>
+                    <th>이메일</th>
+                    <th>전화번호</th>
+                    <th>가입일</th>
+                    <th>최근 로그인</th>
+                    <th>주문 수</th>
+                    <th>총 구매금액</th>
+                    <th>상태</th>
+                    <th>작업</th>
                   </tr>
-                ) : (
-                  filteredCustomers.map((customer) => (
-                    <tr key={customer.id}>
-                      <td>
-                        <div className="admin-customer-name">{customer.name}</div>
-                      </td>
-                      <td>
-                        <div className="admin-customer-email">
-                          {customer.email}
-                        </div>
-                      </td>
-                      <td>
-                        <span className="admin-customer-phone">
-                          {customer.phone}
-                        </span>
-                      </td>
-                      <td>
-                        <span className="admin-customer-date">
-                          {formatDate(customer.joinDate)}
-                        </span>
-                      </td>
-                      <td>
-                        <span className="admin-customer-date">
-                          {formatDate(customer.lastLogin)}
-                        </span>
-                      </td>
-                      <td>
-                        <span className="admin-customer-order-count">
-                          {customer.orderCount}건
-                        </span>
-                      </td>
-                      <td>
-                        <span className="admin-customer-total">
-                          ₩ {customer.totalSpent.toLocaleString()}
-                        </span>
-                      </td>
-                      <td>
-                        <select
-                          className={`admin-customer-status-select ${getStatusClass(
-                            customer.status
-                          )}`}
-                          value={customer.status}
-                          onChange={(e) =>
-                            handleStatusChange(customer.id, e.target.value)
-                          }
-                        >
-                          <option value="활성">활성</option>
-                          <option value="비활성">비활성</option>
-                        </select>
-                      </td>
-                      <td>
-                        <button
-                          className="admin-action-btn admin-detail-btn"
-                          onClick={() => handleViewDetail(customer)}
-                        >
-                          상세보기
-                        </button>
+                </thead>
+                <tbody>
+                  {customers.length === 0 ? (
+                    <tr>
+                      <td colSpan="9" className="admin-empty-state">
+                        {searchTerm || statusFilter !== "전체"
+                          ? "검색 결과가 없습니다"
+                          : "등록된 회원이 없습니다"}
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    customers.map((customer) => {
+                      const customerId = customer._id || customer.id;
+                      const orderCount = customer.orderCount || 0;
+                      const totalSpent = customer.totalSpent || 0;
+                      const status = customer.isDeleted ? "비활성" : (customer.status || "활성");
+
+                      return (
+                        <tr key={customerId}>
+                          <td>
+                            <div className="admin-customer-name">{customer.name || "-"}</div>
+                          </td>
+                          <td>
+                            <div className="admin-customer-email">
+                              {customer.email || "-"}
+                            </div>
+                          </td>
+                          <td>
+                            <span className="admin-customer-phone">
+                              {customer.phone || "-"}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="admin-customer-date">
+                              {formatDate(customer.createdAt || customer.joinDate)}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="admin-customer-date">
+                              {formatDate(customer.lastLogin)}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="admin-customer-order-count">
+                              {orderCount}건
+                            </span>
+                          </td>
+                          <td>
+                            <span className="admin-customer-total">
+                              ₩ {totalSpent.toLocaleString()}
+                            </span>
+                          </td>
+                          <td>
+                            <select
+                              className={`admin-customer-status-select ${getStatusClass(
+                                status
+                              )}`}
+                              value={status}
+                              onChange={(e) =>
+                                handleStatusChange(customerId, e.target.value)
+                              }
+                            >
+                              <option value="활성">활성</option>
+                              <option value="비활성">비활성</option>
+                            </select>
+                          </td>
+                          <td>
+                            <button
+                              className="admin-action-btn admin-detail-btn"
+                              onClick={() => handleViewDetail(customer)}
+                            >
+                              상세보기
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
@@ -368,25 +344,25 @@ function AdminCustomers() {
                   <div className="customer-detail-info-row">
                     <span className="customer-detail-label">이름:</span>
                     <span className="customer-detail-value">
-                      {selectedCustomer.name}
+                      {selectedCustomer.name || "-"}
                     </span>
                   </div>
                   <div className="customer-detail-info-row">
                     <span className="customer-detail-label">이메일:</span>
                     <span className="customer-detail-value">
-                      {selectedCustomer.email}
+                      {selectedCustomer.email || "-"}
                     </span>
                   </div>
                   <div className="customer-detail-info-row">
                     <span className="customer-detail-label">전화번호:</span>
                     <span className="customer-detail-value">
-                      {selectedCustomer.phone}
+                      {selectedCustomer.phone || "-"}
                     </span>
                   </div>
                   <div className="customer-detail-info-row">
                     <span className="customer-detail-label">가입일:</span>
                     <span className="customer-detail-value">
-                      {formatDate(selectedCustomer.joinDate)}
+                      {formatDate(selectedCustomer.createdAt || selectedCustomer.joinDate)}
                     </span>
                   </div>
                   <div className="customer-detail-info-row">
@@ -399,12 +375,12 @@ function AdminCustomers() {
                     <span className="customer-detail-label">상태:</span>
                     <select
                       className={`customer-detail-status-select ${getStatusClass(
-                        selectedCustomer.status
+                        selectedCustomer.isDeleted ? "비활성" : (selectedCustomer.status || "활성")
                       )}`}
-                      value={selectedCustomer.status}
+                      value={selectedCustomer.isDeleted ? "비활성" : (selectedCustomer.status || "활성")}
                       onChange={(e) =>
                         handleStatusChange(
-                          selectedCustomer.id,
+                          selectedCustomer._id || selectedCustomer.id,
                           e.target.value
                         )
                       }
@@ -422,25 +398,26 @@ function AdminCustomers() {
                   <div className="customer-detail-info-row">
                     <span className="customer-detail-label">주문 수:</span>
                     <span className="customer-detail-value">
-                      {selectedCustomer.orderCount}건
+                      {selectedCustomer.orderCount || 0}건
                     </span>
                   </div>
                   <div className="customer-detail-info-row">
                     <span className="customer-detail-label">총 구매금액:</span>
                     <span className="customer-detail-value customer-detail-amount">
-                      ₩ {selectedCustomer.totalSpent.toLocaleString()}
+                      ₩ {(selectedCustomer.totalSpent || 0).toLocaleString()}
                     </span>
                   </div>
                   <div className="customer-detail-info-row">
                     <span className="customer-detail-label">평균 주문금액:</span>
                     <span className="customer-detail-value">
                       ₩{" "}
-                      {selectedCustomer.orderCount > 0
-                        ? Math.round(
-                            selectedCustomer.totalSpent /
-                              selectedCustomer.orderCount
-                          ).toLocaleString()
-                        : 0}
+                      {(() => {
+                        const orderCount = selectedCustomer.orderCount || 0;
+                        const totalSpent = selectedCustomer.totalSpent || 0;
+                        return orderCount > 0
+                          ? Math.round(totalSpent / orderCount).toLocaleString()
+                          : (selectedCustomer.averageOrderAmount || 0).toLocaleString();
+                      })()}
                     </span>
                   </div>
                 </div>
@@ -454,4 +431,3 @@ function AdminCustomers() {
 }
 
 export default AdminCustomers;
-

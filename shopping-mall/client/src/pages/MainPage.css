@@ -46,7 +46,7 @@
   gap: 12px;
 }
 
-.cu-actions button {
+.cu-actions button:not(.cu-admin-btn):not(.cu-logout-btn) {
   border: none;
   background: none;
   padding: 0;
@@ -86,6 +86,61 @@
 
 .cu-icon-cart {
   position: relative;
+}
+
+.cu-admin-btn {
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--text-dark);
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 12px;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  text-decoration: none;
+}
+
+.cu-admin-btn:hover {
+  color: var(--text-dark);
+  opacity: 0.7;
+}
+
+.cu-admin-btn:active {
+  transform: scale(0.98);
+}
+
+.cu-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 12px;
+}
+
+.cu-user-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.cu-logout-btn {
+  padding: 6px 12px;
+  background: transparent;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cu-logout-btn:hover {
+  background: var(--text-dark);
+  color: var(--bg-primary);
 }
 
 .icon-badge {

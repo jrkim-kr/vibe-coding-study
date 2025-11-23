@@ -5,6 +5,11 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import customerRoutes from "./routes/customerRoutes.js";
 
 // 환경 변수 로드
 dotenv.config();
@@ -54,6 +59,13 @@ app.get("/health", (req, res) => {
 
 // API 라우트
 app.use("/api/users", userRoutes);
+
+// 관리자 API 라우트
+app.use("/api/admin", adminRoutes);
+app.use("/api/admin/products", productRoutes);
+app.use("/api/admin/orders", orderRoutes);
+app.use("/api/admin/categories", categoryRoutes);
+app.use("/api/admin/customers", customerRoutes);
 
 // MongoDB 연결 상태 확인
 mongoose.connection.on("connected", () => {

@@ -48,7 +48,7 @@ function MainPage() {
           <a href="#">NEW IN</a>
           <a href="#">BEST</a>
         </nav>
-        <h1 className="cu-logo">COMMON UNIQUE</h1>
+        <h1 className="cu-logo">SHOPPPING MALL DEMO</h1>
         <div className="cu-actions">
           <div className="cu-search-block">
             <span className="cu-search-line" />
@@ -199,10 +199,9 @@ function MainPage() {
           />
         </div>
         <p className="cu-footer-info">
-          © (주)어나더무드 All rights reserved. BUSINESS NUMBER L.
-          제2019-서울마포-2200호 ONLINE L. 108-81-98622 ADDRESS 03992 서울특별시
-          마포구 동교로23길 32-23 (동교동) 2, 3층 EMAIL help@anothermood.com
-          1688-9308
+          © Shoppping Mall Demo Inc. All rights reserved. BUSINESS NUMBER:
+          123-45-67890 ONLINE LICENSE: 2025-SEOUL-0001 ADDRESS: 123 Demo Street,
+          Seoul, Korea EMAIL support@shopppingmall.demo PHONE 02-123-4567
         </p>
       </footer>
 

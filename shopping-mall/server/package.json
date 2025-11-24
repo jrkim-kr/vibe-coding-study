@@ -1,7 +1,7 @@
 {
   "name": "shopping-mall-server",
   "version": "1.0.0",
-  "description": "Shopping Mall Backend API",
+  "description": "Shoppping Mall Demo Backend API",
   "main": "src/index.js",
   "type": "module",
   "scripts": {

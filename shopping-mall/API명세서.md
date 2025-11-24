@@ -1,6 +1,6 @@
 # API 문서
 
-쇼핑몰 백엔드 API의 전체 문서입니다.
+Shoppping Mall Demo 백엔드 API의 전체 문서입니다.
 
 ## 목차
 

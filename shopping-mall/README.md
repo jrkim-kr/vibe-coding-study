@@ -1,10 +1,10 @@
-# Shopping Mall MVP
+# Shoppping Mall Demo MVP
 
-온라인 쇼핑몰의 핵심 기능을 구현한 MVP(Minimum Viable Product) 프로젝트입니다.
+Shoppping Mall Demo의 핵심 기능을 구현한 MVP(Minimum Viable Product) 프로젝트입니다.
 
 ## 📋 프로젝트 개요
 
-이 프로젝트는 React + Vite 프론트엔드와 Node.js + Express + MongoDB 백엔드로 구성된 풀스택 쇼핑몰 애플리케이션입니다.
+이 프로젝트는 React + Vite 프론트엔드와 Node.js + Express + MongoDB 백엔드로 구성된 풀스택 Shoppping Mall Demo 애플리케이션입니다.
 
 ### 주요 기능
 

@@ -46,13 +46,13 @@ function AdminHeader({ isSidebarOpen, onToggleSidebar }) {
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </button>
-        <h1
-          className="admin-logo"
-          onClick={() => navigate("/")}
-          style={{ cursor: "pointer" }}
-        >
-          COMMON UNIQUE
-        </h1>
+            <h1
+              className="admin-logo"
+              onClick={() => navigate("/")}
+              style={{ cursor: "pointer" }}
+            >
+              SHOPPPING MALL DEMO
+            </h1>
         <h2 className="admin-console-title">Admin Console</h2>
       </div>
       <div className="admin-header-right">

@@ -1,6 +1,6 @@
-# Shopping Mall Client
+# Shoppping Mall Demo Client
 
-Vite와 React를 사용한 쇼핑몰 프론트엔드 애플리케이션입니다.
+Vite와 React를 사용한 Shoppping Mall Demo 프론트엔드 애플리케이션입니다.
 
 ## 기술 스택
 

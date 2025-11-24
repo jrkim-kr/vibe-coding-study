@@ -1,4 +1,4 @@
-// Main entry point for the Shopping Mall Backend API
+// Main entry point for the Shoppping Mall Demo Backend API
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -43,7 +43,7 @@ mongoose
 // 기본 라우트
 app.get("/", (req, res) => {
   res.json({
-    message: "Shopping Mall Backend API",
+    message: "Shoppping Mall Demo Backend API",
     status: "running",
   });
 });

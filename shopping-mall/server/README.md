@@ -1,6 +1,6 @@
-# Shopping Mall Backend API
+# Shoppping Mall Demo Backend API
 
-Node.js, Express, MongoDB를 사용한 쇼핑몰 백엔드 API 서버입니다.
+Node.js, Express, MongoDB를 사용한 Shoppping Mall Demo 백엔드 API 서버입니다.
 
 ## 기술 스택
 

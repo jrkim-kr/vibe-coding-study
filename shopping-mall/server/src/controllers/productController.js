@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
+import { deleteCloudinaryImages } from "../utils/cloudinary.js";
 
 /**
  * 상품 목록 조회
@@ -454,6 +455,24 @@ export const deleteProduct = async (req, res) => {
       return res.status(404).json({
         error: "상품을 찾을 수 없습니다.",
       });
+    }
+
+    if (product.images && product.images.length > 0) {
+      try {
+        const { deleted, errors } = await deleteCloudinaryImages(product.images);
+        if (errors.length > 0) {
+          console.warn(
+            `[Cloudinary] 일부 이미지 삭제 실패: ${JSON.stringify(errors)}`
+          );
+        } else {
+          console.log(`[Cloudinary] ${deleted}개의 이미지를 삭제했습니다.`);
+        }
+      } catch (cloudinaryError) {
+        console.error(
+          "Cloudinary 이미지 삭제 중 오류:",
+          cloudinaryError.message
+        );
+      }
     }
 
     // 실제 DB에서 삭제

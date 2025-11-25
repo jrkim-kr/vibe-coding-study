@@ -1,17 +1,26 @@
 import { useState, useEffect } from "react";
 import ImageUploader from "./ImageUploader";
+import { uploadMultipleImages } from "../utils/cloudinary";
 import "./ProductModal.css";
 
+const createInitialForm = (categories, statuses) => ({
+  name: "",
+  category: categories[0] || "",
+  price: "",
+  stock: "",
+  description: "",
+  status: statuses[0] || "",
+});
+
+const createInitialImages = () => ({
+  existing: [],
+  pending: [],
+});
+
 function ProductModal({ product, categories, statuses, onSave, onClose }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    category: categories[0] || "",
-    price: "",
-    stock: "",
-    description: "",
-    images: [],
-    status: statuses[0] || "",
-  });
+  const [formData, setFormData] = useState(createInitialForm(categories, statuses));
+  const [images, setImages] = useState(createInitialImages());
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (product) {
@@ -27,21 +36,15 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
         price: product.price || "",
         stock: product.stock || "",
         description: product.description || "",
-        images:
-          product.images && product.images.length > 0 ? product.images : [],
         status: product.status || statuses[0] || "",
       });
-    } else {
-      // 새 상품 등록 시 초기화
-      setFormData({
-        name: "",
-        category: categories[0] || "",
-        price: "",
-        stock: "",
-        description: "",
-        images: [],
-        status: statuses[0] || "",
+      setImages({
+        existing: product.images && product.images.length > 0 ? product.images : [],
+        pending: [],
       });
+    } else {
+      setFormData(createInitialForm(categories, statuses));
+      setImages(createInitialImages());
     }
   }, [product, categories, statuses]);
 
@@ -53,39 +56,56 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
     }));
   };
 
-  const handleImagesChange = (images) => {
-    setFormData((prev) => ({
-      ...prev,
-      images: images,
-    }));
+  const handleImagesChange = (nextImages) => {
+    setImages(nextImages);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 이미지가 최소 1개는 있어야 함
-    if (formData.images.length === 0) {
+    const totalImages = images.existing.length + images.pending.length;
+    if (totalImages === 0) {
       alert("최소 1개의 이미지를 업로드해주세요.");
       return;
     }
 
-    const productData = {
-      name: formData.name.trim(),
-      category: formData.category,
-      price: parseInt(formData.price),
-      stock: parseInt(formData.stock),
-      description: formData.description || "",
-      images: formData.images || [],
-      status: formData.status || "판매중",
-    };
-
-    console.log("상품 데이터 전송:", productData);
-
-    if (product) {
-      productData.id = product.id;
+    if (saving) {
+      return;
     }
 
-    onSave(productData);
+    setSaving(true);
+
+    try {
+      let uploadedUrls = [];
+
+      if (images.pending.length > 0) {
+        const files = images.pending.map((item) => item.file);
+        uploadedUrls = await uploadMultipleImages(files);
+      }
+
+      const productData = {
+        name: formData.name.trim(),
+        category: formData.category,
+        price: parseInt(formData.price),
+        stock: parseInt(formData.stock),
+        description: formData.description || "",
+        images: [...images.existing, ...uploadedUrls],
+        status: formData.status || "판매중",
+      };
+
+      console.log("상품 데이터 전송:", productData);
+
+      if (product) {
+        productData.id = product.id;
+      }
+
+      await onSave(productData);
+      setImages(createInitialImages());
+    } catch (error) {
+      alert(error.message || "이미지 업로드 중 오류가 발생했습니다.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -222,11 +242,7 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
             <label className="product-form-label">
               상품 이미지 <span className="required">*</span>
             </label>
-            <ImageUploader
-              images={formData.images}
-              onChange={handleImagesChange}
-              maxImages={5}
-            />
+            <ImageUploader images={images} onChange={handleImagesChange} maxImages={5} />
           </div>
 
           <div className="product-modal-actions">
@@ -237,8 +253,8 @@ function ProductModal({ product, categories, statuses, onSave, onClose }) {
             >
               취소
             </button>
-            <button type="submit" className="product-modal-submit">
-              {product ? "수정" : "등록"}
+            <button type="submit" className="product-modal-submit" disabled={saving}>
+              {saving ? "처리 중..." : product ? "수정" : "등록"}
             </button>
           </div>
         </form>

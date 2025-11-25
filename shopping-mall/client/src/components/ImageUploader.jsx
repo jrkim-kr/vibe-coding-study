@@ -1,85 +1,78 @@
-import { useState, useRef, useEffect } from "react";
-import { uploadImageToCloudinary } from "../utils/cloudinary";
+import { useRef, useEffect } from "react";
 import "./ImageUploader.css";
 
-function ImageUploader({ images = [], onChange, maxImages = 5 }) {
-  const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState({});
-  const [previewUrls, setPreviewUrls] = useState(images);
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
+function ImageUploader({
+  images = { existing: [], pending: [] },
+  onChange,
+  maxImages = 5,
+}) {
   const fileInputRef = useRef(null);
+  const pendingRef = useRef(images.pending || []);
 
-  // 기존 이미지 URL과 새로 업로드할 파일을 구분
-  const existingImages = images.filter((img) => typeof img === "string");
-  const [newFiles, setNewFiles] = useState([]);
+  const existingImages = images.existing || [];
+  const pendingImages = images.pending || [];
+  const totalImages = existingImages.length + pendingImages.length;
 
-  // images prop이 변경될 때 previewUrls 업데이트
   useEffect(() => {
-    setPreviewUrls(images);
-  }, [images]);
+    pendingRef.current = pendingImages;
+  }, [pendingImages]);
 
-  const handleFileSelect = async (e) => {
+  useEffect(() => {
+    return () => {
+      pendingRef.current.forEach((item) => {
+        if (item?.previewUrl) {
+          URL.revokeObjectURL(item.previewUrl);
+        }
+      });
+    };
+  }, []);
+
+  const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
-    const remainingSlots = maxImages - (existingImages.length + newFiles.length);
+    const remainingSlots = maxImages - totalImages;
 
     if (files.length > remainingSlots) {
       alert(`최대 ${maxImages}개의 이미지만 업로드할 수 있습니다.`);
-      return;
-    }
-
-    setUploading(true);
-    const uploadedUrls = [];
-
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const fileIndex = newFiles.length + i;
-
-        // 파일 미리보기 생성
-        const previewUrl = URL.createObjectURL(file);
-        const tempFiles = [...newFiles, file];
-        setNewFiles(tempFiles);
-        setPreviewUrls([...previewUrls, previewUrl]);
-
-        // Cloudinary에 업로드
-        try {
-          const uploadedUrl = await uploadImageToCloudinary(file, (progress) => {
-            setUploadProgress((prev) => ({
-              ...prev,
-              [fileIndex]: progress,
-            }));
-          });
-
-          // 업로드 성공 시 미리보기 URL을 실제 URL로 교체
-          setPreviewUrls((prev) => {
-            const updated = [...prev];
-            updated[existingImages.length + fileIndex] = uploadedUrl;
-            return updated;
-          });
-
-          uploadedUrls.push(uploadedUrl);
-        } catch (error) {
-          // 업로드 실패 시 해당 파일 제거
-          setNewFiles((prev) => prev.filter((_, idx) => idx !== fileIndex));
-          setPreviewUrls((prev) => {
-            const updated = [...prev];
-            updated.splice(existingImages.length + fileIndex, 1);
-            return updated;
-          });
-          alert(`이미지 업로드 실패: ${error.message}`);
-        }
-      }
-
-      // 모든 이미지 URL을 부모 컴포넌트에 전달
-      const allImages = [...existingImages, ...uploadedUrls];
-      onChange(allImages);
-    } catch (error) {
-      alert(`이미지 업로드 중 오류가 발생했습니다: ${error.message}`);
-    } finally {
-      setUploading(false);
-      setUploadProgress({});
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      return;
+    }
+
+    const nextPending = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+
+      if (!file.type.startsWith("image/")) {
+        alert("이미지 파일만 선택할 수 있습니다.");
+        continue;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        alert("파일 크기는 10MB를 초과할 수 없습니다.");
+        continue;
+      }
+
+      const previewUrl = URL.createObjectURL(file);
+      nextPending.push({
+        id: `${file.name}-${Date.now()}-${i}`,
+        file,
+        previewUrl,
+      });
+    }
+
+    if (nextPending.length > 0) {
+      onChange({
+        existing: [...existingImages],
+        pending: [...pendingImages, ...nextPending],
+      });
+    }
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
     }
   };
 
@@ -87,22 +80,22 @@ function ImageUploader({ images = [], onChange, maxImages = 5 }) {
     const isExisting = index < existingImages.length;
     
     if (isExisting) {
-      // 기존 이미지 제거
-      const updated = existingImages.filter((_, i) => i !== index);
-      onChange(updated);
-      setPreviewUrls(updated);
+      const updatedExisting = existingImages.filter((_, i) => i !== index);
+      onChange({
+        existing: updatedExisting,
+        pending: [...pendingImages],
+      });
     } else {
-      // 새로 업로드한 파일 제거
       const newIndex = index - existingImages.length;
-      const updatedFiles = newFiles.filter((_, i) => i !== newIndex);
-      const updatedUrls = previewUrls.filter((_, i) => i !== index);
-      
-      setNewFiles(updatedFiles);
-      setPreviewUrls(updatedUrls);
-      
-      // 기존 이미지 + 남은 새 이미지 URL
-      const allImages = [...existingImages, ...updatedUrls.slice(existingImages.length)];
-      onChange(allImages);
+      const removedItem = pendingImages[newIndex];
+      if (removedItem?.previewUrl) {
+        URL.revokeObjectURL(removedItem.previewUrl);
+      }
+      const updatedPending = pendingImages.filter((_, i) => i !== newIndex);
+      onChange({
+        existing: [...existingImages],
+        pending: updatedPending,
+      });
     }
   };
 
@@ -112,31 +105,33 @@ function ImageUploader({ images = [], onChange, maxImages = 5 }) {
     }
   };
 
-  const canAddMore = existingImages.length + newFiles.length < maxImages;
+  const canAddMore = totalImages < maxImages;
+  const previewItems = [
+    ...existingImages.map((url, index) => ({
+      key: `existing-${index}`,
+      url,
+    })),
+    ...pendingImages.map((item) => ({
+      key: item.id,
+      url: item.previewUrl,
+      isPending: true,
+    })),
+  ];
 
   return (
     <div className="image-uploader">
       <div className="image-uploader-grid">
-        {previewUrls.map((url, index) => (
-          <div key={index} className="image-uploader-item">
+        {previewItems.map((item, index) => (
+          <div key={item.key} className="image-uploader-item">
             <div className="image-uploader-preview">
-              <img src={url} alt={`미리보기 ${index + 1}`} />
-              {uploadProgress[index] !== undefined && (
-                <div className="image-uploader-progress">
-                  <div
-                    className="image-uploader-progress-bar"
-                    style={{ width: `${uploadProgress[index]}%` }}
-                  />
-                  <span className="image-uploader-progress-text">
-                    {uploadProgress[index]}%
-                  </span>
-                </div>
+              <img src={item.url} alt={`미리보기 ${index + 1}`} />
+              {item.isPending && (
+                <span className="image-uploader-pending-label">등록 대기</span>
               )}
               <button
                 type="button"
                 className="image-uploader-remove"
                 onClick={() => handleRemoveImage(index)}
-                disabled={uploading}
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -160,12 +155,8 @@ function ImageUploader({ images = [], onChange, maxImages = 5 }) {
               type="button"
               className="image-uploader-add"
               onClick={handleAddMore}
-              disabled={uploading}
+              disabled={!canAddMore}
             >
-              {uploading ? (
-                <div className="image-uploader-spinner" />
-              ) : (
-                <>
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -178,8 +169,6 @@ function ImageUploader({ images = [], onChange, maxImages = 5 }) {
                     <line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
                   <span>이미지 추가</span>
-                </>
-              )}
             </button>
           </div>
         )}
@@ -192,14 +181,8 @@ function ImageUploader({ images = [], onChange, maxImages = 5 }) {
         multiple
         onChange={handleFileSelect}
         style={{ display: "none" }}
-        disabled={uploading || !canAddMore}
+        disabled={!canAddMore}
       />
-
-      {uploading && (
-        <div className="image-uploader-status">
-          이미지를 업로드하는 중...
-        </div>
-      )}
 
       <p className="image-uploader-help">
         최대 {maxImages}개의 이미지를 업로드할 수 있습니다. (각 10MB 이하)

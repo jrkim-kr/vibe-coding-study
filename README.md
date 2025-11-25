@@ -1,8 +1,9 @@
 # 바이브 코딩
 
-## 📚 강의 개요
+코딩알려주는누나의 `바이브 코딩: 할일앱 만들고 진짜 쇼핑몰 만들기` 강의 학습 기록 레포입니다.
+강의 흐름에 맞춰 실습 산출물과 문서를 프로젝트별 폴더에 정리했습니다.
 
-> **기술 스택 정보**: 프로젝트에서 사용하는 전체 기술 스택은 [TODO_TECH_STACK.md](./TODO_TECH_STACK.md)를 참고하세요.
+## 📚 강의 개요
 
 | 항목            | 내용                                                  |
 | --------------- | ----------------------------------------------------- |
@@ -71,3 +72,21 @@
 | 9. 쇼핑몰 프로젝트 - 진짜 서비스 만들기 | 9-28. 백엔드 배포하기                                 | 14       | 유료 |
 | 9. 쇼핑몰 프로젝트 - 진짜 서비스 만들기 | 9-29. 프론트엔드 배포                                 | 13       | 유료 |
 | 10. 강의를 마무리하며                   | 마지막 인사                                           | 3        | 유료 |
+
+## 📁 프로젝트
+
+| 프로젝트                | 경로                                              | 개요                                                                                                                              | 주요 기술/비고                                     | 기술 스택 문서                             |
+| ----------------------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------ |
+| jrkim-netflix           | `/Users/jrkim/vibe-coding-study/jrkim-netflix`    | HTML/CSS/JS 기반의 넷플릭스 랜딩 페이지 클론으로 반응형 섹션 설계 연습.                                                           | Vanilla JS, CSS Flex/Grid                          | -                                          |
+| Todo Web App (Firebase) | `/Users/jrkim/vibe-coding-study/todo-firebase`    | Firebase Realtime Database와 연동되는 SPA 스타일 투두 앱. 인증 없이 CRUD 흐름 실습.                                               | Firebase SDK, Vanilla JS                           | [TODO_TECH_STACK.md](./TODO_TECH_STACK.md) |
+| Todo REST API (Express) | `/Users/jrkim/vibe-coding-study/todo-backend`     | MongoDB/Mongoose를 사용하는 투두 백엔드 API로 컨트롤러/라우터 구조와 배포 문서 포함.                                              | Node.js, Express, MongoDB                          | [TODO_TECH_STACK.md](./TODO_TECH_STACK.md) |
+| Todo React App          | `/Users/jrkim/vibe-coding-study/todo-react`       | Vite 기반 프론트엔드 투두 클라이언트로 상태 관리와 API 연동을 리액트 훅으로 구성.                                                 | React, Vite                                        | [TODO_TECH_STACK.md](./TODO_TECH_STACK.md) |
+| Shopping Mall Fullstack | `/Users/jrkim/vibe-coding-study/shopping-mall`    | 실 서비스 수준 쇼핑몰. `client`는 어드민/사용자 UI, `server`는 JWT 인증·주문·상품 관리 API, `docs`에는 요구사항·DB·아키텍처 문서. | React, Vite, Node.js, Express, MongoDB, Cloudinary | -                                          |
+| HTML/CSS/JS Demo        | `/Users/jrkim/vibe-coding-study/html-css-js-demo` | 강의 초반 실습용 기본 웹 자산으로 DOM 스크립트·스타일 실험.                                                                       | Vanilla JS                                         | -                                          |
+
+## 🛠 기술 스택 & 참고 문서
+
+- **프론트엔드 공통**: HTML/CSS/JavaScript, React + Vite, Firebase SDK(실시간 투두), Cloudinary 업로드 위젯.
+- **백엔드 공통**: Node.js, Express, MongoDB/Mongoose, JWT 인증, 환경 변수 기반 설정.
+- **배포/도구**: Vercel·Netlify 프론트 배포, Render 기반 백엔드 배포, npm 스크립트 자동화.
+- **상세 문서 위치**: 각 프로젝트별 개발 문서는 해당 폴더의 `README.md` 또는 `docs/`에서 확인.

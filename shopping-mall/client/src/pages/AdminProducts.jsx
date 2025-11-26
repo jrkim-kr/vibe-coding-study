@@ -19,6 +19,9 @@ function AdminProducts() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     // URL 경로에 따라 activeMenu 설정
@@ -63,33 +66,51 @@ function AdminProducts() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  // 검색어 변경 시 상품 목록만 다시 로드
+  // 검색어 변경 시 페이지를 1로 리셋하고 상품 목록 다시 로드
   useEffect(() => {
-    loadProducts();
+    setCurrentPage(1);
+    loadProducts(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
 
-  const loadProducts = async () => {
+  const loadProducts = async (page = currentPage) => {
     try {
       setLoading(true);
       setError("");
-      
+
       // 토큰 확인
       const token = localStorage.getItem("authToken");
       if (!token) {
         throw new Error("로그인이 필요합니다. 다시 로그인해주세요.");
       }
-      
+
       const response = await productAPI.getProducts({
         search: searchTerm,
-        limit: 100,
+        page,
+        // limit은 보내지 않고, 백엔드 기본값(2개)에만 의존
       });
+
       setProducts(response.products || []);
+
+      // 백엔드에서 내려주는 페이지네이션 정보가 있으면 사용
+      if (response.pagination) {
+        setCurrentPage(response.pagination.page || page);
+        setTotalPages(response.pagination.pages || 1);
+        setTotalCount(
+          response.pagination.total || response.products?.length || 0
+        );
+      } else {
+        // pagination 정보가 없다면 fallback
+        setCurrentPage(page);
+        setTotalPages(1);
+        setTotalCount(response.products?.length || 0);
+      }
     } catch (err) {
       console.error("상품 목록 로드 오류:", err);
-      const errorMessage = err.message || "상품 목록을 불러오는 중 오류가 발생했습니다.";
+      const errorMessage =
+        err.message || "상품 목록을 불러오는 중 오류가 발생했습니다.";
       setError(errorMessage);
-      
+
       // 인증 오류인 경우 로그인 페이지로 리다이렉트
       if (errorMessage.includes("인증") || errorMessage.includes("로그인")) {
         setTimeout(() => {
@@ -105,12 +126,16 @@ function AdminProducts() {
     try {
       const response = await categoryAPI.getCategories();
       console.log("카테고리 응답:", response); // 디버깅용
-      
-      if (response && response.categories && Array.isArray(response.categories)) {
+
+      if (
+        response &&
+        response.categories &&
+        Array.isArray(response.categories)
+      ) {
         const categoryNames = response.categories.map((cat) => cat.name);
         console.log("카테고리 이름 목록:", categoryNames); // 디버깅용
         setCategories(categoryNames);
-        
+
         // 카테고리가 없으면 기본 카테고리 추가
         if (categoryNames.length === 0) {
           console.warn("카테고리가 없습니다. 기본 카테고리를 추가하세요.");
@@ -143,7 +168,7 @@ function AdminProducts() {
     try {
       await productAPI.deleteProduct(id);
       alert("상품이 삭제되었습니다.");
-      loadProducts(); // 목록 새로고침
+      loadProducts(1); // 삭제 후 첫 페이지로 새로고침
     } catch (err) {
       alert(err.message || "상품 삭제 중 오류가 발생했습니다.");
     }
@@ -154,7 +179,10 @@ function AdminProducts() {
       console.log("상품 저장 시도:", productData);
       if (editingProduct) {
         // 수정
-        const response = await productAPI.updateProduct(editingProduct._id || editingProduct.id, productData);
+        const response = await productAPI.updateProduct(
+          editingProduct._id || editingProduct.id,
+          productData
+        );
         console.log("상품 수정 응답:", response);
         alert("상품이 수정되었습니다.");
       } else {
@@ -165,7 +193,7 @@ function AdminProducts() {
       }
       setIsModalOpen(false);
       setEditingProduct(null);
-      loadProducts(); // 목록 새로고침
+      loadProducts(1); // 저장 후 첫 페이지로 새로고침
     } catch (err) {
       console.error("상품 저장 오류 상세:", err);
       alert(err.message || "상품 저장 중 오류가 발생했습니다.");
@@ -254,14 +282,10 @@ function AdminProducts() {
                 className="admin-search-input"
               />
             </div>
-            <div className="admin-products-count">
-              총 {products.length}개
-            </div>
+            <div className="admin-products-count">총 {totalCount}개</div>
           </div>
 
-          {error && (
-            <div className="admin-error-message">{error}</div>
-          )}
+          {error && <div className="admin-error-message">{error}</div>}
 
           <div className="admin-products-table-container">
             {loading ? (
@@ -283,7 +307,9 @@ function AdminProducts() {
                   {products.length === 0 ? (
                     <tr>
                       <td colSpan="7" className="admin-empty-state">
-                        {searchTerm ? "검색 결과가 없습니다" : "등록된 상품이 없습니다"}
+                        {searchTerm
+                          ? "검색 결과가 없습니다"
+                          : "등록된 상품이 없습니다"}
                       </td>
                     </tr>
                   ) : (
@@ -335,13 +361,17 @@ function AdminProducts() {
                             <div className="admin-product-actions">
                               <button
                                 className="admin-action-btn admin-edit-btn"
-                                onClick={() => handleEditProduct(formattedProduct)}
+                                onClick={() =>
+                                  handleEditProduct(formattedProduct)
+                                }
                               >
                                 수정
                               </button>
                               <button
                                 className="admin-action-btn admin-delete-btn"
-                                onClick={() => handleDeleteProduct(formattedProduct.id)}
+                                onClick={() =>
+                                  handleDeleteProduct(formattedProduct.id)
+                                }
                               >
                                 삭제
                               </button>
@@ -355,6 +385,43 @@ function AdminProducts() {
               </table>
             )}
           </div>
+
+          {/* 페이지네이션 */}
+          {!loading && totalPages > 1 && (
+            <div className="admin-pagination">
+              <button
+                className="admin-page-btn"
+                onClick={() => currentPage > 1 && loadProducts(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                이전
+              </button>
+              {Array.from({ length: totalPages }, (_, idx) => {
+                const pageNumber = idx + 1;
+                return (
+                  <button
+                    key={pageNumber}
+                    className={`admin-page-btn ${
+                      currentPage === pageNumber ? "active" : ""
+                    }`}
+                    onClick={() => loadProducts(pageNumber)}
+                    disabled={currentPage === pageNumber}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
+              <button
+                className="admin-page-btn"
+                onClick={() =>
+                  currentPage < totalPages && loadProducts(currentPage + 1)
+                }
+                disabled={currentPage === totalPages}
+              >
+                다음
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

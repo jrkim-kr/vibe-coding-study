@@ -10,7 +10,8 @@ export const getProducts = async (req, res) => {
   try {
     const {
       page = 1,
-      limit = 20,
+      // 관리자 상품 관리 페이지: 기본으로 한 페이지에 2개씩 표시
+      limit = 2,
       search = "",
       category = "",
       status = "",
@@ -459,7 +460,9 @@ export const deleteProduct = async (req, res) => {
 
     if (product.images && product.images.length > 0) {
       try {
-        const { deleted, errors } = await deleteCloudinaryImages(product.images);
+        const { deleted, errors } = await deleteCloudinaryImages(
+          product.images
+        );
         if (errors.length > 0) {
           console.warn(
             `[Cloudinary] 일부 이미지 삭제 실패: ${JSON.stringify(errors)}`

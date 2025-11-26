@@ -44,11 +44,11 @@ shopping-mall/
 │   └── package.json
 │
 └── docs/
-    ├── 요구사항정의서.md
-    ├── 기능명세서.md
-    ├── 데이터베이스설계서.md
-    ├── IMPLEMENTATION_STATUS.md
-    └── 아키텍처구성도.md
+    ├── requirements.md
+    ├── feature-spec.md
+    ├── database-schema.md
+    ├── implementation-status.md
+    └── system-architecture.md
 ```
 
 ## 🚀 시작하기
@@ -107,12 +107,12 @@ REFRESH_TOKEN_EXPIRES_IN=7d
 
 ## 📚 문서
 
-- [구현 현황](./IMPLEMENTATION_STATUS.md) - 기능별 구현 상태
-- [요구사항정의서](./요구사항정의서.md) - 프로젝트 요구사항 및 범위
-- [기능명세서](./기능명세서.md) - 상세 기능 동작 명세
-- [데이터베이스설계서](./데이터베이스설계서.md) - 데이터베이스 스키마 설계
-- [아키텍처구성도](./아키텍처구성도.md) - 시스템 아키텍처 및 구조
-- [API명세서](./API명세서.md) - 전체 API 문서 (사용자 + 관리자)
+- [구현 현황](./docs/implementation-status.md) - 기능별 구현 상태
+- [요구사항 정의서](./docs/requirements.md) - 프로젝트 요구사항 및 범위
+- [기능 명세서](./docs/feature-spec.md) - 상세 기능 동작 명세
+- [데이터베이스 설계서](./docs/database-schema.md) - 데이터베이스 스키마 설계
+- [시스템 아키텍처](./docs/system-architecture.md) - 시스템 아키텍처 및 구조
+- [REST API 명세서](./docs/rest-api-spec.md) - 전체 API 문서 (사용자 + 관리자)
 
 ## 🛠️ 기술 스택
 
@@ -205,7 +205,7 @@ REFRESH_TOKEN_EXPIRES_IN=7d
 
 ### 관리자 API
 
-자세한 내용은 [API 명세서](./API명세서.md)를 참고하세요.
+자세한 내용은 [REST API 명세서](./docs/rest-api-spec.md)를 참고하세요.
 
 - `GET /api/admin/dashboard/stats` - 대시보드 통계
 - `GET /api/admin/products` - 상품 목록

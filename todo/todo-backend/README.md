@@ -153,9 +153,9 @@ curl -X DELETE http://localhost:5000/todos/:id
 - **데이터베이스**: MongoDB Atlas
 - **백엔드 서버**: Cloudtype
 
-자세한 배포 가이드는 [`../docs/backend-deployment.md`](../docs/backend-deployment.md)를 참고하세요.
+자세한 배포 가이드는 [`../docs/fullstack-deployment.md`](../docs/fullstack-deployment.md)를 참고하세요.
 
 ## 추가 문서
 
-- [배포 가이드](../docs/backend-deployment.md) - MongoDB Atlas 및 Cloudtype 배포 방법
+- [배포 가이드](../docs/fullstack-deployment.md) - MongoDB Atlas 및 Cloudtype, Vercel 풀스택 배포 방법
 - [아키텍처 가이드](../docs/backend-architecture.md) - Mongoose 모델 및 애플리케이션 흐름 설명

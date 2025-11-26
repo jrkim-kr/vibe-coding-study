@@ -287,6 +287,44 @@ export const adminAPI = {
   },
 };
 
+// 장바구니 API
+export const cartAPI = {
+  // 현재 사용자 장바구니 조회
+  getCart: async () => {
+    return apiRequest("/api/cart");
+  },
+
+  // 장바구니에 상품 추가 또는 수량 증가
+  addOrUpdateItem: async ({ productId, quantity }) => {
+    return apiRequest("/api/cart/items", {
+      method: "POST",
+      body: JSON.stringify({ productId, quantity }),
+    });
+  },
+
+  // 특정 상품 수량 변경
+  updateItemQuantity: async (productId, quantity) => {
+    return apiRequest(`/api/cart/items/${productId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ quantity }),
+    });
+  },
+
+  // 장바구니에서 상품 제거
+  removeItem: async (productId) => {
+    return apiRequest(`/api/cart/items/${productId}`, {
+      method: "DELETE",
+    });
+  },
+
+  // 장바구니 비우기
+  clearCart: async () => {
+    return apiRequest("/api/cart", {
+      method: "DELETE",
+    });
+  },
+};
+
 // 메인 페이지 등에서 사용하는 공개 상품 조회 API
 export const publicProductAPI = {
   // 공개용 상품 목록 조회

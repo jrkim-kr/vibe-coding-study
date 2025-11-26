@@ -69,9 +69,6 @@ client/
 │   ├── utils/              # 유틸리티 함수
 │   │   └── cloudinary.js   # Cloudinary 업로드
 │   │
-│   ├── data/               # 정적 데이터
-│   │   └── products.js     # 샘플 상품 데이터
-│   │
 │   ├── App.jsx             # 메인 앱 컴포넌트
 │   ├── main.jsx            # 진입점
 │   └── index.css           # 전역 스타일

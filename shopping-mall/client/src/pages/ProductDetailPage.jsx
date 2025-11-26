@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { publicProductAPI } from "../utils/api";
+import { publicProductAPI, cartAPI } from "../utils/api";
 import MainHeader from "../components/MainHeader";
+import { addToCart } from "../utils/cart";
 import "./MainPage.css";
 import "./ProductDetailPage.css";
 
@@ -40,11 +41,47 @@ function ProductDetailPage() {
     setQuantity((prev) => {
       const next = prev + delta;
       if (next < 1) return 1;
-      if (product && typeof product.stock === "number" && next > product.stock) {
+      if (
+        product &&
+        typeof product.stock === "number" &&
+        next > product.stock
+      ) {
         return product.stock;
       }
       return next;
     });
+  };
+
+  const handleAddToCart = async () => {
+    if (!product) return;
+    // 로컬 장바구니 업데이트
+    addToCart(product, quantity);
+
+    // 서버 장바구니 동기화 (로그인 상태 가정)
+    try {
+      await cartAPI.addOrUpdateItem({
+        productId: product._id || product.id,
+        quantity,
+      });
+      alert("장바구니에 상품이 담겼습니다.");
+    } catch (error) {
+      console.error("서버 장바구니 동기화 오류:", error);
+      if (
+        error.message.includes("인증") ||
+        error.message.includes("로그인") ||
+        error.message.includes("토큰")
+      ) {
+        if (
+          window.confirm(
+            "로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?"
+          )
+        ) {
+          window.location.href = "/login";
+        }
+      } else {
+        alert(error.message || "장바구니 동기화 중 오류가 발생했습니다.");
+      }
+    }
   };
 
   if (loading) {
@@ -155,7 +192,8 @@ function ProductDetailPage() {
                 onClick={() => handleQuantityChange(1)}
                 disabled={
                   isSoldOut ||
-                  (typeof product.stock === "number" && quantity >= product.stock)
+                  (typeof product.stock === "number" &&
+                    quantity >= product.stock)
                 }
               >
                 +
@@ -171,7 +209,9 @@ function ProductDetailPage() {
           </div>
 
           {isLowStock && (
-            <p className="pd-low-stock">품절 임박! 남은 수량이 많지 않습니다.</p>
+            <p className="pd-low-stock">
+              품절 임박! 남은 수량이 많지 않습니다.
+            </p>
           )}
           {isSoldOut && (
             <p className="pd-soldout-message">현재 품절된 상품입니다.</p>
@@ -189,6 +229,7 @@ function ProductDetailPage() {
               type="button"
               className="pd-btn pd-cart"
               disabled={isSoldOut}
+              onClick={handleAddToCart}
             >
               ADD TO CART
             </button>
@@ -207,5 +248,3 @@ function ProductDetailPage() {
 }
 
 export default ProductDetailPage;
-
-

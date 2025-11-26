@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  getCartCount,
+  CART_UPDATED_EVENT,
+  clearCart,
+  setCartItems,
+} from "../utils/cart";
+import { cartAPI } from "../utils/api";
 
 function MainHeader() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -23,12 +31,58 @@ function MainHeader() {
         setUser(null);
         setIsLoggedIn(false);
       }
+
+      // 장바구니 수량 갱신
+      setCartCount(getCartCount());
     };
 
     checkAuth();
   }, []);
 
+  // 로그인된 상태라면 서버 장바구니와 동기화하여 뱃지 숫자 맞추기
+  useEffect(() => {
+    const syncCartFromServer = async () => {
+      if (!isLoggedIn) return;
+      try {
+        const serverCart = await cartAPI.getCart();
+        if (serverCart && Array.isArray(serverCart.items)) {
+          setCartItems(serverCart.items);
+          const count = serverCart.items.reduce(
+            (sum, item) => sum + (item.quantity || 0),
+            0
+          );
+          setCartCount(count);
+          return;
+        }
+      } catch (error) {
+        console.warn("헤더에서 서버 장바구니 동기화 실패:", error);
+      }
+      // 실패 시 로컬 기준으로라도 맞춰주기
+      setCartCount(getCartCount());
+    };
+
+    syncCartFromServer();
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    const handler = () => {
+      setCartCount(getCartCount());
+    };
+
+    window.addEventListener("storage", handler);
+    window.addEventListener(CART_UPDATED_EVENT, handler);
+    return () => {
+      window.removeEventListener("storage", handler);
+      window.removeEventListener(CART_UPDATED_EVENT, handler);
+    };
+  }, []);
+
   const handleLogout = () => {
+    // 로컬 장바구니 비우기 및 뱃지 0으로
+    clearCart();
+    setCartCount(0);
+
+    // 인증 정보 제거
     localStorage.removeItem("authToken");
     localStorage.removeItem("currentUser");
     setUser(null);
@@ -128,6 +182,7 @@ function MainHeader() {
           className="cu-icon-btn cu-icon-cart"
           aria-label="장바구니"
           title="장바구니"
+          onClick={() => navigate("/cart")}
         >
           <svg
             className="cu-icon"
@@ -140,7 +195,7 @@ function MainHeader() {
             <circle cx="11" cy="20" r="1" />
             <circle cx="18" cy="20" r="1" />
           </svg>
-          <span className="icon-badge">0</span>
+          <span className="icon-badge">{cartCount}</span>
         </button>
       </div>
     </header>

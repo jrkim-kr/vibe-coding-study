@@ -101,7 +101,7 @@ function MainPage() {
 
       <section className="cu-section cu-best-section">
         <SectionHeader
-          label="Our Best Sellers"
+          label="Best Sellers"
           description="Crafted To Impress, Designed To Surpass Every Expectation With Remarkable Quality."
         />
         {!loading && !error && bestSellers.length === 0 && (

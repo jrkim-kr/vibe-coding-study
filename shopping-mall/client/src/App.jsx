@@ -7,6 +7,7 @@ import AdminProducts from "./pages/AdminProducts";
 import AdminOrders from "./pages/AdminOrders";
 import AdminCategories from "./pages/AdminCategories";
 import AdminCustomers from "./pages/AdminCustomers";
+import ProductDetailPage from "./pages/ProductDetailPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/" element={<MainPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route
           path="/admin"
           element={

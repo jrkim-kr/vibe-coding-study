@@ -1,19 +1,43 @@
+import { useNavigate } from "react-router-dom";
 import "./ProductCard.css";
 
-function ProductCard({ product }) {
+/**
+ * 공통 상품 카드 컴포넌트
+ *
+ * props:
+ * - product: { id/_id, name, image, originalPrice, finalPrice, reviews, palette? }
+ * - variant: "new" | "best" (섹션에 따라 스타일/용도 구분, 기본값 "new")
+ */
+function ProductCard({ product, variant = "new" }) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (!product?.id && !product?._id) return;
+    const id = product.id || product._id;
+    navigate(`/products/${id}`);
+  };
+
+  const palette = Array.isArray(product.palette) ? product.palette : [];
+  const isBest = variant === "best";
+
   return (
-    <article className="cu-card">
+    <article
+      className={`cu-card ${isBest ? "cu-card--best" : "cu-card--new"}`}
+      onClick={handleClick}
+    >
       <div className="cu-card-image">
         <img src={product.image} alt={product.name} loading="lazy" />
-        <div className="cu-palette">
-          {product.palette.map((color) => (
-            <span
-              key={color}
-              className="cu-swatch"
-              style={{ backgroundColor: color }}
-            />
-          ))}
-        </div>
+        {palette.length > 0 && (
+          <div className="cu-palette">
+            {palette.map((color) => (
+              <span
+                key={color}
+                className="cu-swatch"
+                style={{ backgroundColor: color }}
+              />
+            ))}
+          </div>
+        )}
       </div>
       <div className="cu-card-body">
         <p className="cu-card-title">{product.name}</p>
@@ -26,4 +50,5 @@ function ProductCard({ product }) {
 }
 
 export default ProductCard;
+
 

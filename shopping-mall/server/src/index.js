@@ -10,6 +10,7 @@ import productRoutes from "./routes/productRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
+import publicProductRoutes from "./routes/publicProductRoutes.js";
 
 // 환경 변수 로드
 dotenv.config();
@@ -66,6 +67,9 @@ app.use("/api/admin/products", productRoutes);
 app.use("/api/admin/orders", orderRoutes);
 app.use("/api/admin/categories", categoryRoutes);
 app.use("/api/admin/customers", customerRoutes);
+
+// 공개 상품 API 라우트 (메인 페이지 등에서 사용)
+app.use("/api/products", publicProductRoutes);
 
 // MongoDB 연결 상태 확인
 mongoose.connection.on("connected", () => {

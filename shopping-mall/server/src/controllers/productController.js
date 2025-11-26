@@ -11,7 +11,7 @@ export const getProducts = async (req, res) => {
     const {
       page = 1,
       // 관리자 상품 관리 페이지: 기본으로 한 페이지에 2개씩 표시
-      limit = 2,
+      limit = 5,
       search = "",
       category = "",
       status = "",
@@ -402,10 +402,20 @@ export const updateProduct = async (req, res) => {
 
     // 카테고리 업데이트
     if (category) {
-      const categoryDoc = await Category.findOne({
-        $or: [{ _id: category }, { name: category }],
-        isDeleted: false,
-      });
+      let categoryDoc;
+
+      // category가 ObjectId 형식인지 확인
+      if (mongoose.Types.ObjectId.isValid(category)) {
+        categoryDoc = await Category.findOne({
+          _id: new mongoose.Types.ObjectId(category),
+          isDeleted: false,
+        });
+      } else {
+        categoryDoc = await Category.findOne({
+          name: String(category).trim(),
+          isDeleted: false,
+        });
+      }
 
       if (!categoryDoc) {
         return res.status(400).json({
@@ -416,18 +426,89 @@ export const updateProduct = async (req, res) => {
       product.category = categoryDoc._id;
     }
 
-    // 필드 업데이트
-    if (name) product.name = name;
-    if (price !== undefined) product.price = parseInt(price);
-    if (stock !== undefined) product.stock = parseInt(stock);
-    if (description !== undefined) product.description = description;
-    if (images) {
-      product.images = Array.isArray(images) ? images : [images];
+    // 필드 업데이트 (검증 포함)
+    if (name) {
+      product.name = String(name).trim();
     }
-    if (status) product.status = status;
 
-    await product.save();
-    await product.populate("category", "name");
+    if (price !== undefined) {
+      const parsedPrice = parseInt(price);
+      if (isNaN(parsedPrice) || parsedPrice < 0) {
+        return res.status(400).json({
+          error: "가격은 0 이상의 숫자여야 합니다.",
+          received: price,
+        });
+      }
+      product.price = parsedPrice;
+    }
+
+    if (stock !== undefined) {
+      const parsedStock = parseInt(stock);
+      if (isNaN(parsedStock) || parsedStock < 0) {
+        return res.status(400).json({
+          error: "재고는 0 이상의 숫자여야 합니다.",
+          received: stock,
+        });
+      }
+      product.stock = parsedStock;
+    }
+
+    if (description !== undefined) {
+      product.description = description;
+    }
+
+    // 이미지 업데이트 (유효한 문자열 URL만 허용)
+    if (images !== undefined) {
+      const imagesArray = Array.isArray(images) ? images : [images];
+      const validImages = imagesArray.filter(
+        (img) => img && typeof img === "string" && img.trim().length > 0
+      );
+
+      // 클라이언트에서 이미지를 보내긴 했는데 모두 잘못된 경우
+      if (imagesArray.length > 0 && validImages.length === 0) {
+        return res.status(400).json({
+          error: "유효한 이미지가 없습니다.",
+          details: "이미지 URL이 올바른지 확인해주세요.",
+        });
+      }
+
+      if (validImages.length > 0) {
+        product.images = validImages;
+      }
+    }
+
+    if (status) {
+      product.status = status;
+    }
+
+    try {
+      await product.save();
+      await product.populate("category", "name");
+    } catch (saveError) {
+      console.error("상품 수정 저장 오류:", saveError);
+
+      if (saveError.name === "CastError") {
+        return res.status(400).json({
+          error: "데이터 타입 오류가 발생했습니다.",
+          details: `필드 "${saveError.path}"에 잘못된 값이 입력되었습니다: ${saveError.value}`,
+          errorName: "CastError",
+        });
+      }
+
+      if (saveError.name === "ValidationError") {
+        const validationErrors = Object.values(saveError.errors).map(
+          (err) => err.message
+        );
+        return res.status(400).json({
+          error: "상품 데이터 검증 실패",
+          details: validationErrors,
+          message: saveError.message,
+        });
+      }
+
+      // 기타 저장 오류
+      throw saveError;
+    }
 
     res.json({
       message: "상품이 수정되었습니다.",

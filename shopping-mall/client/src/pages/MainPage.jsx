@@ -1,149 +1,73 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import BestSellerCard from "../components/BestSellerCard";
 import SectionHeader from "../components/SectionHeader";
 import FooterColumn from "../components/FooterColumn";
-import { newArrivals, bestSellers } from "../data/products.js";
+import MainHeader from "../components/MainHeader";
+import { publicProductAPI } from "../utils/api";
 import "./MainPage.css";
 
 function MainPage() {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [newArrivals, setNewArrivals] = useState([]);
+  const [bestSellers, setBestSellers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  // 메인 페이지 상품 조회 (공개 API 사용)
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem("authToken");
-      const userStr = localStorage.getItem("currentUser");
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-      if (token && userStr) {
-        try {
-          const userData = JSON.parse(userStr);
-          console.log("사용자 정보:", userData); // 디버깅용
-          setUser(userData);
-          setIsLoggedIn(true);
-        } catch (error) {
-          console.error("사용자 정보 파싱 오류:", error);
-        }
+        // 메인 페이지용으로 최대 8개까지 조회
+        const response = await publicProductAPI.getProducts({
+          page: 1,
+          limit: 8,
+          status: "판매중",
+        });
+
+        const products = response.products || [];
+
+        // 카드 컴포넌트에서 기대하는 형태로 매핑
+        const mapped = products.map((p, index) => {
+          const price =
+            typeof p.price === "number"
+              ? p.price
+              : parseInt(p.price ?? "0", 10) || 0;
+
+          const formattedPrice = price.toLocaleString();
+
+          return {
+            id: p._id || p.id || index,
+            name: p.name,
+            originalPrice: formattedPrice,
+            finalPrice: formattedPrice,
+            reviews: 0,
+            image:
+              (Array.isArray(p.images) && p.images[0]) ||
+              "https://via.placeholder.com/800x800?text=Product",
+            // 팔레트 정보는 없으므로 기본 색상값 사용
+            palette: ["#f4f4f4", "#d4d4d4", "#a3a3a3"],
+          };
+        });
+
+        // 앞쪽 4개는 NEW ARRIVAL, 나머지는 BEST로 사용
+        setNewArrivals(mapped.slice(0, 4));
+        setBestSellers(mapped.slice(4));
+      } catch (err) {
+        console.error("메인 상품 조회 오류:", err);
+        setError(err.message || "상품을 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false);
       }
     };
 
-    checkAuth();
+    fetchProducts();
   }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("currentUser");
-    setUser(null);
-    setIsLoggedIn(false);
-    navigate("/");
-  };
 
   return (
     <div className="main-page">
-      <header className="cu-header">
-        <nav className="cu-nav">
-          <a href="#">SHOP</a>
-          <a href="#">NEW IN</a>
-          <a href="#">BEST</a>
-        </nav>
-        <h1 className="cu-logo">SHOPPPING MALL DEMO</h1>
-        <div className="cu-actions">
-          <div className="cu-search-block">
-            <span className="cu-search-line" />
-            <button type="button" aria-label="검색" title="검색">
-              <svg
-                className="cu-icon"
-                viewBox="0 0 24 24"
-                role="img"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="6.5" />
-                <line x1="15.5" y1="15.5" x2="21" y2="21" />
-              </svg>
-            </button>
-          </div>
-          {isLoggedIn ? (
-            <>
-              {user?.role === "admin" ? (
-                <>
-                  <button
-                    type="button"
-                    className="cu-admin-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      console.log("관리자 버튼 클릭됨, 이동:", "/admin");
-                      navigate("/admin");
-                    }}
-                    title="관리자 페이지"
-                  >
-                    어드민
-                  </button>
-                  <button
-                    type="button"
-                    className="cu-logout-btn"
-                    onClick={handleLogout}
-                    title="로그아웃"
-                  >
-                    로그아웃
-                  </button>
-                </>
-              ) : (
-                <div className="cu-user-menu">
-                  <span className="cu-user-name">{user?.name || "사용자"}</span>
-                  <button
-                    type="button"
-                    className="cu-logout-btn"
-                    onClick={handleLogout}
-                    title="로그아웃"
-                  >
-                    로그아웃
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <button
-              type="button"
-              className="cu-icon-btn"
-              aria-label="로그인 페이지 이동"
-              onClick={() => navigate("/login")}
-              title="로그인"
-            >
-              <svg
-                className="cu-icon"
-                viewBox="0 0 24 24"
-                role="img"
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="8" r="4" />
-                <path d="M4.5 20c2-3 4.5-4.5 7.5-4.5s5.5 1.5 7.5 4.5" />
-              </svg>
-            </button>
-          )}
-          <button
-            type="button"
-            className="cu-icon-btn cu-icon-cart"
-            aria-label="장바구니"
-            title="장바구니"
-          >
-            <svg
-              className="cu-icon"
-              viewBox="0 0 24 24"
-              role="img"
-              aria-hidden="true"
-            >
-              <path d="M3 6h3l2.4 9.6a2 2 0 0 0 2 1.6h7.6" />
-              <path d="M9 6h12l-1.5 6h-9" />
-              <circle cx="11" cy="20" r="1" />
-              <circle cx="18" cy="20" r="1" />
-            </svg>
-            <span className="icon-badge">0</span>
-          </button>
-        </div>
-      </header>
+      <MainHeader />
 
       <section className="cu-hero">
         <div className="cu-hero-image" role="img" aria-label="winter look" />
@@ -160,6 +84,14 @@ function MainPage() {
           label="NEW ARRIVAL"
           description="Crafted To Impress, Designed To Surpass Every Expectation With Remarkable Quality."
         />
+        {loading && (
+          <p style={{ textAlign: "center", marginTop: "16px" }}>로딩 중...</p>
+        )}
+        {error && !loading && (
+          <p style={{ textAlign: "center", marginTop: "16px", color: "red" }}>
+            {error}
+          </p>
+        )}
         <div className="cu-grid">
           {newArrivals.map((product) => (
             <ProductCard key={product.id} product={product} />
@@ -172,9 +104,14 @@ function MainPage() {
           label="Our Best Sellers"
           description="Crafted To Impress, Designed To Surpass Every Expectation With Remarkable Quality."
         />
+        {!loading && !error && bestSellers.length === 0 && (
+          <p style={{ textAlign: "center", marginTop: "16px" }}>
+            표시할 베스트 상품이 없습니다.
+          </p>
+        )}
         <div className="cu-best-grid">
           {bestSellers.map((item) => (
-            <BestSellerCard key={item.id} item={item} />
+            <ProductCard key={item.id} product={item} variant="best" />
           ))}
         </div>
       </section>

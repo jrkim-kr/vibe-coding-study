@@ -287,3 +287,25 @@ export const adminAPI = {
   },
 };
 
+// 메인 페이지 등에서 사용하는 공개 상품 조회 API
+export const publicProductAPI = {
+  // 공개용 상품 목록 조회
+  getProducts: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page);
+    if (params.limit) queryParams.append("limit", params.limit);
+    if (params.search) queryParams.append("search", params.search);
+    if (params.category) queryParams.append("category", params.category);
+    if (params.status) queryParams.append("status", params.status);
+
+    const queryString = queryParams.toString();
+    return apiRequest(
+      `/api/products${queryString ? `?${queryString}` : ""}`
+    );
+  },
+
+  // 공개용 상품 상세 조회
+  getProductById: async (id) => {
+    return apiRequest(`/api/products/${id}`);
+  },
+};

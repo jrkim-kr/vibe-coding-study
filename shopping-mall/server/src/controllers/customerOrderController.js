@@ -14,12 +14,17 @@ import {
 // 내 주문 목록 조회
 export const getMyOrders = asyncHandler(async (req, res) => {
   const userId = req.user._id;
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, shippingStatus } = req.query;
 
   const query = {
     userId,
     isDeleted: false,
   };
+
+  // 배송 상태 필터 추가
+  if (shippingStatus && shippingStatus !== "전체") {
+    query.shippingStatus = shippingStatus;
+  }
 
   const {
     skip,

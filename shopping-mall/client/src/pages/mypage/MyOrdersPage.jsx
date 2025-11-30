@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
@@ -7,17 +7,30 @@ import { userOrderAPI } from "../../utils/api";
 import "./MyPageLayout.css";
 import "./MyOrdersPage.css";
 
+const shippingStatuses = [
+  "전체",
+  "주문접수",
+  "배송준비중",
+  "배송중",
+  "배송완료",
+  "취소",
+  "반품",
+];
+
 function MyOrdersPage() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [statusFilter, setStatusFilter] = useState("전체");
 
   useEffect(() => {
     const load = async () => {
       try {
         setLoading(true);
         setError("");
+        // 백엔드에서 필터링하거나 프론트엔드에서 필터링
+        // 일단 모든 주문을 가져와서 프론트엔드에서 필터링
         const res = await userOrderAPI.getMyOrders({ limit: 50 });
         setOrders(res.orders || []);
       } catch (err) {
@@ -30,6 +43,36 @@ function MyOrdersPage() {
 
     load();
   }, []);
+
+  // 배송 상태별 필터링
+  const filteredOrders = useMemo(() => {
+    if (statusFilter === "전체") {
+      return orders;
+    }
+    return orders.filter(
+      (order) => (order.shippingStatus || "주문접수") === statusFilter
+    );
+  }, [orders, statusFilter]);
+
+  // 배송 상태별 클래스 반환
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "주문접수":
+        return "status-pending";
+      case "배송준비중":
+        return "status-preparing";
+      case "배송중":
+        return "status-shipping";
+      case "배송완료":
+        return "status-delivered";
+      case "취소":
+        return "status-cancelled";
+      case "반품":
+        return "status-returned";
+      default:
+        return "";
+    }
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "-";
@@ -60,6 +103,24 @@ function MyOrdersPage() {
       </header>
 
       <section className="mypage-main-content">
+        {/* 배송 상태 필터 탭 */}
+        {!loading && !error && orders.length > 0 && (
+          <div className="my-orders-filter">
+            {shippingStatuses.map((status) => (
+              <button
+                key={status}
+                type="button"
+                className={`my-orders-filter-tab ${
+                  statusFilter === status ? "active" : ""
+                }`}
+                onClick={() => setStatusFilter(status)}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+        )}
+
         {loading ? (
           <div className="mypage-empty">주문 내역을 불러오는 중입니다...</div>
         ) : error ? (
@@ -75,39 +136,50 @@ function MyOrdersPage() {
               쇼핑하러 가기
             </button>
           </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="mypage-empty">
+            {statusFilter} 상태의 주문 내역이 없습니다.
+          </div>
         ) : (
           <ul className="my-orders-list">
-            {orders.map((order) => (
-              <li
-                key={order._id}
-                className="my-order-item"
-                onClick={() => handleClickOrder(order._id)}
-              >
-                <div className="my-order-main-row">
-                  <div>
-                    <div className="my-order-number">
-                      {order.orderNumber || "주문번호 없음"}
+            {filteredOrders.map((order) => {
+              const shippingStatus = order.shippingStatus || "주문접수";
+              return (
+                <li
+                  key={order._id}
+                  className="my-order-item"
+                  onClick={() => handleClickOrder(order._id)}
+                >
+                  <div className="my-order-main-row">
+                    <div>
+                      <div className="my-order-number">
+                        {order.orderNumber || "주문번호 없음"}
+                      </div>
+                      <div className="my-order-date">
+                        {formatDate(order.createdAt)}
+                      </div>
                     </div>
-                    <div className="my-order-date">
-                      {formatDate(order.createdAt)}
+                    <div className="my-order-status">
+                      <span
+                        className={`my-order-badge ${getStatusClass(
+                          shippingStatus
+                        )}`}
+                      >
+                        {shippingStatus}
+                      </span>
                     </div>
                   </div>
-                  <div className="my-order-status">
-                    <span className="my-order-badge">
-                      {order.shippingStatus || "주문접수"}
+                  <div className="my-order-sub-row">
+                    <span className="my-order-count">
+                      상품 {order.items?.length || 0}개
+                    </span>
+                    <span className="my-order-amount">
+                      ₩ {(order.totalAmount || 0).toLocaleString()}
                     </span>
                   </div>
-                </div>
-                <div className="my-order-sub-row">
-                  <span className="my-order-count">
-                    상품 {order.items?.length || 0}개
-                  </span>
-                  <span className="my-order-amount">
-                    ₩ {(order.totalAmount || 0).toLocaleString()}
-                  </span>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

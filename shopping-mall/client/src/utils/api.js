@@ -344,6 +344,7 @@ export const userOrderAPI = {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append("page", params.page);
     if (params.limit) queryParams.append("limit", params.limit);
+    if (params.shippingStatus) queryParams.append("shippingStatus", params.shippingStatus);
 
     const queryString = queryParams.toString();
     return apiRequest(`/api/orders${queryString ? `?${queryString}` : ""}`);

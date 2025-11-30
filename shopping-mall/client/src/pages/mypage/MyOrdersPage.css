@@ -95,9 +95,77 @@
 
 .my-order-badge {
   font-size: 12px;
-  padding: 3px 8px;
+  padding: 4px 12px;
   border-radius: 999px;
   background: #f1efe8;
+  color: #555;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+/* 배송 상태별 색상 */
+.my-order-badge.status-pending {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.my-order-badge.status-preparing {
+  background: #cfe2ff;
+  color: #084298;
+}
+
+.my-order-badge.status-shipping {
+  background: #d1e7dd;
+  color: #0f5132;
+}
+
+.my-order-badge.status-delivered {
+  background: #d4edda;
+  color: #155724;
+}
+
+.my-order-badge.status-cancelled {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.my-order-badge.status-returned {
+  background: #e2e3e5;
+  color: #41464b;
+}
+
+/* 배송 상태 필터 탭 */
+.my-orders-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ebe6de;
+  flex-wrap: wrap;
+}
+
+.my-orders-filter-tab {
+  padding: 8px 16px;
+  border: 1px solid #ebe6de;
+  background: #fff;
+  color: var(--text-dark);
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.my-orders-filter-tab:hover {
+  border-color: var(--text-dark);
+  background: #f9f6f2;
+}
+
+.my-orders-filter-tab.active {
+  background: var(--text-dark);
+  color: #fff;
+  border-color: var(--text-dark);
+  font-weight: 500;
 }
 
 .my-order-sub-row {

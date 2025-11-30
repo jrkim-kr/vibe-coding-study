@@ -8,7 +8,19 @@ Shoppping Mall Demo의 핵심 기능을 구현한 MVP(Minimum Viable Product) �
 
 ### 주요 기능
 
-- ✅ 회원가입/로그인 (JWT 기반 인증)
+#### 사용자 기능
+
+- ✅ 회원가입/로그인/로그아웃 (JWT 기반 인증)
+- ✅ 회원 정보 조회/수정
+- ✅ 배송지 관리 (추가/수정/삭제, 기본 배송지 설정)
+- ✅ 상품 조회 (목록, 상세, 카테고리별)
+- ✅ 장바구니 (추가/수정/삭제, 수량 변경)
+- ✅ 주문 및 결제 (포트원 연동)
+- ✅ 주문 내역 조회
+- ✅ 상품 디테일 페이지 BUY NOW 기능
+
+#### 관리자 기능
+
 - ✅ 관리자 대시보드 (매출 통계, 주문 현황)
 - ✅ 상품 관리 (등록/수정/삭제, Cloudinary 이미지 업로드)
 - ✅ 카테고리 관리 (계층 구조 지원)
@@ -17,10 +29,10 @@ Shoppping Mall Demo의 핵심 기능을 구현한 MVP(Minimum Viable Product) �
 
 ### 향후 구현 예정
 
-- 상품 조회 및 검색
-- 장바구니
-- 주문 및 결제
-- 리뷰 시스템
+- 상품 검색 및 정렬
+- 리뷰 시스템 (API 연동)
+- 주문 취소 기능
+- 비밀번호 변경 및 회원탈퇴
 
 ## 🏗️ 프로젝트 구조
 
@@ -71,7 +83,7 @@ cp env.example .env
 npm run dev
 ```
 
-프론트엔드는 `http://localhost:5173`에서 실행됩니다.
+프론트엔드는 `http://localhost:3000`에서 실행됩니다.
 
 #### 2. 백엔드 설정
 
@@ -100,9 +112,21 @@ VITE_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
 ```env
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/shopping-mall-db
+# 또는 MongoDB Atlas
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/shopping-mall-demo
+
 JWT_SECRET=your-secret-key
-ACCESS_TOKEN_EXPIRES_IN=15m
+ACCESS_TOKEN_EXPIRES_IN=24h
 REFRESH_TOKEN_EXPIRES_IN=7d
+
+# 포트원(아임포트) 결제 게이트웨이
+PORTONE_REST_API_KEY=your-portone-rest-api-key
+PORTONE_REST_API_SECRET=your-portone-rest-api-secret
+
+# Cloudinary (이미지 관리)
+CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
 ```
 
 ## 📚 문서
@@ -113,6 +137,7 @@ REFRESH_TOKEN_EXPIRES_IN=7d
 - [데이터베이스 설계서](./docs/database-schema.md) - 데이터베이스 스키마 설계
 - [시스템 아키텍처](./docs/system-architecture.md) - 시스템 아키텍처 및 구조
 - [REST API 명세서](./docs/rest-api-spec.md) - 전체 API 문서 (사용자 + 관리자)
+- [배포 환경 설정 가이드](./docs/deployment-config.md) - 배포 환경 설정 및 배포 순서
 
 ## 🛠️ 기술 스택
 
@@ -141,6 +166,16 @@ REFRESH_TOKEN_EXPIRES_IN=7d
   - `MainPage.jsx` - 메인 페이지
   - `LoginPage.jsx` - 로그인 페이지
   - `RegisterPage.jsx` - 회원가입 페이지
+  - `ProductDetailPage.jsx` - 상품 상세 페이지
+  - `CartPage.jsx` - 장바구니 페이지
+  - `OrderPage.jsx` - 주문 페이지
+  - `OrderCompletePage.jsx` - 주문 완료 페이지
+  - `MyPage.jsx` - 마이페이지
+  - `MyOrdersPage.jsx` - 주문 내역 페이지
+  - `MyOrderDetailPage.jsx` - 주문 상세 페이지
+  - `MyProfilePage.jsx` - 회원 정보 수정 페이지
+  - `MyAddressesPage.jsx` - 배송지 관리 페이지
+  - `MyReviewsPage.jsx` - 리뷰 관리 페이지
   - `AdminDashboard.jsx` - 관리자 대시보드
   - `AdminProducts.jsx` - 상품 관리
   - `AdminOrders.jsx` - 주문 관리
@@ -154,7 +189,9 @@ REFRESH_TOKEN_EXPIRES_IN=7d
   - `CategoryModal.jsx` - 카테고리 등록/수정 모달
 
 - `src/utils/` - 유틸리티
+  - `api.js` - API 호출 유틸리티
   - `cloudinary.js` - Cloudinary 업로드 함수
+  - `cart.js` - 장바구니 로컬 스토리지 관리
 
 ### 백엔드 (server/)
 
@@ -167,14 +204,27 @@ REFRESH_TOKEN_EXPIRES_IN=7d
 
 - `src/controllers/` - 비즈니스 로직
 
-  - `userController.js` - 회원 관리
+  - `authController.js` - 인증 (회원가입, 로그인, 프로필 관리, 배송지 관리)
   - `productController.js` - 상품 관리
   - `categoryController.js` - 카테고리 관리
-  - `orderController.js` - 주문 관리
+  - `adminOrderController.js` - 관리자 주문 관리
+  - `customerOrderController.js` - 사용자 주문 관리
   - `customerController.js` - 회원 관리
   - `adminController.js` - 대시보드 통계
+  - `cartController.js` - 장바구니 관리
+  - `paymentController.js` - 결제 검증
 
 - `src/routes/` - API 라우트
+  - `userRoutes.js` - 사용자 API (회원가입, 로그인, 프로필, 배송지)
+  - `publicProductRoutes.js` - 공개 상품 API
+  - `cartRoutes.js` - 장바구니 API
+  - `userOrderRoutes.js` - 사용자 주문 API
+  - `paymentRoutes.js` - 결제 API
+  - `adminRoutes.js` - 관리자 대시보드
+  - `productRoutes.js` - 관리자 상품 관리
+  - `orderRoutes.js` - 관리자 주문 관리
+  - `categoryRoutes.js` - 관리자 카테고리 관리
+  - `customerRoutes.js` - 관리자 회원 관리
 - `src/middleware/` - 미들웨어
   - `auth.js` - 인증 및 권한 확인
 
@@ -184,8 +234,9 @@ REFRESH_TOKEN_EXPIRES_IN=7d
 
 - JWT 기반 인증
 - Access Token + Refresh Token 방식
-- Access Token: 15분 만료
+- Access Token: 24시간 만료 (개발 환경)
 - Refresh Token: 7일 만료
+- Refresh Token은 HttpOnly 쿠키에 저장
 
 ### 관리자 권한
 
@@ -202,6 +253,35 @@ REFRESH_TOKEN_EXPIRES_IN=7d
 - `POST /api/users/login` - 로그인
 - `POST /api/users/token/refresh` - 토큰 갱신
 - `POST /api/users/logout` - 로그아웃
+- `GET /api/users/me` - 현재 사용자 정보 조회 (인증 필요)
+- `PUT /api/users/me` - 사용자 프로필 업데이트 (인증 필요)
+- `GET /api/users/me/addresses` - 배송지 목록 조회 (인증 필요)
+- `POST /api/users/me/addresses` - 배송지 추가 (인증 필요)
+- `PUT /api/users/me/addresses/:id` - 배송지 수정 (인증 필요)
+- `DELETE /api/users/me/addresses/:id` - 배송지 삭제 (인증 필요)
+
+### 공개 API
+
+- `GET /api/products` - 상품 목록 조회
+- `GET /api/products/:id` - 상품 상세 조회
+
+### 장바구니 API (인증 필요)
+
+- `GET /api/cart` - 장바구니 조회
+- `POST /api/cart/items` - 상품 추가
+- `PATCH /api/cart/items/:id` - 수량 변경
+- `DELETE /api/cart/items/:id` - 상품 삭제
+- `DELETE /api/cart` - 장바구니 비우기
+
+### 주문 API (인증 필요)
+
+- `GET /api/orders` - 주문 목록 조회
+- `GET /api/orders/:id` - 주문 상세 조회
+- `POST /api/orders` - 주문 생성
+
+### 결제 API (인증 필요)
+
+- `POST /api/payments/verify` - 결제 검증
 
 ### 관리자 API
 
@@ -260,6 +340,16 @@ chore: 빌드 설정 등
 ## 📞 문의
 
 프로젝트에 대한 문의사항이 있으시면 이슈를 생성해주세요.
+
+## 🌐 배포
+
+프로젝트는 다음 환경에 배포되어 있습니다:
+
+- **프론트엔드**: [Vercel](https://shopping-mall-demo-fe.vercel.app/)
+- **백엔드**: [Cloudtype](https://port-0-shopping-mall-demo-be-milmit5ve61b6a6d.sel3.cloudtype.app/)
+- **데이터베이스**: MongoDB Atlas
+
+배포 설정 및 환경 변수 설정은 [배포 환경 설정 가이드](./docs/deployment-config.md)를 참고하세요.
 
 ---
 

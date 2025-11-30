@@ -62,11 +62,21 @@ client/src/
 /                    → MainPage
 /login               → LoginPage
 /register            → RegisterPage
-/admin               → AdminDashboard
-/admin/products      → AdminProducts
-/admin/orders        → AdminOrders
-/admin/categories    → AdminCategories
-/admin/customers      → AdminCustomers
+/products/:id        → ProductDetailPage
+/cart                → CartPage
+/order               → OrderPage (인증 필요)
+/order/complete/:id  → OrderCompletePage (인증 필요)
+/mypage              → MyPage (인증 필요)
+/mypage/orders       → MyOrdersPage (인증 필요)
+/mypage/orders/:id    → MyOrderDetailPage (인증 필요)
+/mypage/profile      → MyProfilePage (인증 필요)
+/mypage/addresses    → MyAddressesPage (인증 필요)
+/mypage/reviews      → MyReviewsPage (인증 필요)
+/admin               → AdminDashboard (인증 + 관리자 권한 필요)
+/admin/products      → AdminProducts (인증 + 관리자 권한 필요)
+/admin/orders        → AdminOrders (인증 + 관리자 권한 필요)
+/admin/categories    → AdminCategories (인증 + 관리자 권한 필요)
+/admin/customers      → AdminCustomers (인증 + 관리자 권한 필요)
 ```
 
 ### 2.4 상태 관리
@@ -121,18 +131,43 @@ server/src/
 
 ```
 /api
-├── /users            # 사용자 API
-│   ├── POST /register
-│   ├── POST /login
-│   ├── POST /token/refresh
-│   └── POST /logout
+├── /users                    # 사용자 API
+│   ├── POST /register        # 회원가입
+│   ├── POST /login           # 로그인
+│   ├── POST /token/refresh   # 토큰 갱신
+│   ├── POST /logout          # 로그아웃
+│   ├── GET /me               # 현재 사용자 정보 조회 (인증 필요)
+│   ├── PUT /me               # 사용자 프로필 업데이트 (인증 필요)
+│   ├── GET /me/addresses     # 배송지 목록 조회 (인증 필요)
+│   ├── POST /me/addresses    # 배송지 추가 (인증 필요)
+│   ├── PUT /me/addresses/:id # 배송지 수정 (인증 필요)
+│   └── DELETE /me/addresses/:id # 배송지 삭제 (인증 필요)
 │
-└── /admin            # 관리자 API (인증 필요)
-    ├── /dashboard    # 대시보드
-    ├── /products     # 상품 관리
-    ├── /orders       # 주문 관리
-    ├── /categories   # 카테고리 관리
-    └── /customers    # 회원 관리
+├── /products                 # 공개 상품 API
+│   ├── GET /                 # 상품 목록 조회
+│   └── GET /:id               # 상품 상세 조회
+│
+├── /cart                     # 장바구니 API (인증 필요)
+│   ├── GET /                 # 장바구니 조회
+│   ├── POST /items            # 상품 추가
+│   ├── PATCH /items/:id      # 수량 변경
+│   ├── DELETE /items/:id     # 상품 삭제
+│   └── DELETE /               # 장바구니 비우기
+│
+├── /orders                   # 주문 API (인증 필요)
+│   ├── GET /                 # 주문 목록 조회
+│   ├── GET /:id               # 주문 상세 조회
+│   └── POST /                 # 주문 생성
+│
+├── /payments                 # 결제 API (인증 필요)
+│   └── POST /verify          # 결제 검증
+│
+└── /admin                    # 관리자 API (인증 + 관리자 권한 필요)
+    ├── /dashboard            # 대시보드
+    ├── /products             # 상품 관리
+    ├── /orders               # 주문 관리
+    ├── /categories           # 카테고리 관리
+    └── /customers            # 회원 관리
 ```
 
 ## 4. 데이터베이스 설계
@@ -285,25 +320,44 @@ PATCH /api/admin/orders/:id/status
 - 페이지네이션으로 대량 데이터 처리
 - populate 최적화
 
-## 10. 배포 아키텍처 (향후)
+## 10. 배포 아키텍처
 
 ```
-┌─────────────┐
-│   CDN       │  (정적 파일)
-└─────────────┘
-       │
-┌──────▼──────┐
-│   Frontend  │  (Vercel/Netlify)
-└──────┬──────┘
-       │
-┌──────▼──────┐
-│   Backend   │  (AWS/Railway/Heroku)
-└──────┬──────┘
-       │
-┌──────▼──────┐
-│  MongoDB    │  (MongoDB Atlas)
-└─────────────┘
+┌─────────────────────────────┐
+│   사용자 브라우저            │
+└──────────────┬──────────────┘
+               │ HTTPS
+               │
+┌──────────────▼──────────────┐
+│   Frontend (Vercel)         │
+│   https://shopping-mall-    │
+│   demo-fe.vercel.app        │
+└──────────────┬──────────────┘
+               │ REST API
+               │
+┌──────────────▼──────────────┐
+│   Backend (Cloudtype)       │
+│   https://port-0-...        │
+│   .cloudtype.app            │
+└──────────────┬──────────────┘
+               │
+┌──────────────▼──────────────┐
+│   MongoDB Atlas             │
+│   (Cloud Database)          │
+└─────────────────────────────┘
 ```
+
+**배포 환경:**
+
+- **프론트엔드**: Vercel (정적 호스팅, 자동 HTTPS)
+- **백엔드**: Cloudtype (Node.js 컨테이너, 자동 HTTPS)
+- **데이터베이스**: MongoDB Atlas (클라우드 데이터베이스)
+
+**배포 순서:**
+
+1. MongoDB Atlas 설정 (데이터베이스 준비)
+2. 백엔드 배포 (Cloudtype)
+3. 프론트엔드 배포 (Vercel)
 
 ## 11. 향후 개선 사항
 
@@ -316,5 +370,13 @@ PATCH /api/admin/orders/:id/status
 
 ---
 
-**문서 버전:** 1.0  
+**문서 버전:** 1.1  
 **최종 업데이트:** 2025-01-22
+
+**주요 변경사항:**
+
+- 회원 정보 수정 API 추가 (GET/PUT /api/users/me)
+- 배송지 관리 API 추가 (GET/POST/PUT/DELETE /api/users/me/addresses)
+- 주문 페이지 배송지 선택 기능 추가
+- 상품 디테일 페이지 BUY NOW 기능 추가
+- 배포 아키텍처 업데이트 (Vercel + Cloudtype + MongoDB Atlas)

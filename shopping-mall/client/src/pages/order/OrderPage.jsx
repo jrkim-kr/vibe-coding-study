@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useMemo, useState, useEffect } from "react";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
-import { userOrderAPI, cartAPI, paymentAPI } from "../../utils/api";
+import { userOrderAPI, cartAPI, paymentAPI, userAPI } from "../../utils/api";
 import { clearCart as clearLocalCart } from "../../utils/cart";
 import "./OrderPage.css";
 
@@ -22,15 +22,58 @@ function OrderPage() {
     memo: "",
   });
 
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [useSavedAddress, setUseSavedAddress] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [submitting, setSubmitting] = useState(false);
 
-  // 포트원 결제 모듈 초기화
+  // 포트원 결제 모듈 초기화 및 배송지 목록 로드
   useEffect(() => {
     const { IMP } = window;
     if (IMP) {
       IMP.init("imp47103540");
     }
+
+    // 배송지 목록 로드
+    const loadAddresses = async () => {
+      try {
+        const response = await userAPI.getAddresses();
+        const addressList = response.addresses || [];
+        setAddresses(addressList);
+
+        // 기본 배송지가 있으면 자동 선택
+        const defaultAddress = addressList.find((addr) => addr.isDefault);
+        if (defaultAddress) {
+          setSelectedAddressId(defaultAddress._id);
+          setUseSavedAddress(true);
+          setShipping({
+            recipientName: defaultAddress.recipientName || "",
+            phone: defaultAddress.phone || "",
+            zipCode: defaultAddress.zipCode || "",
+            address1: defaultAddress.address1 || "",
+            address2: defaultAddress.address2 || "",
+            memo: defaultAddress.memo || "",
+          });
+        } else if (addressList.length > 0) {
+          // 기본 배송지가 없으면 첫 번째 배송지 선택
+          setSelectedAddressId(addressList[0]._id);
+          setUseSavedAddress(true);
+          setShipping({
+            recipientName: addressList[0].recipientName || "",
+            phone: addressList[0].phone || "",
+            zipCode: addressList[0].zipCode || "",
+            address1: addressList[0].address1 || "",
+            address2: addressList[0].address2 || "",
+            memo: addressList[0].memo || "",
+          });
+        }
+      } catch (error) {
+        console.error("배송지 목록 로드 오류:", error);
+      }
+    };
+
+    loadAddresses();
   }, []);
 
   const { productsTotal, shippingFee, discountTotal, paymentTotal, totalQty } =
@@ -61,6 +104,40 @@ function OrderPage() {
       ...prev,
       [field]: value,
     }));
+    // 수동 입력 시 저장된 배송지 선택 해제
+    if (useSavedAddress) {
+      setUseSavedAddress(false);
+      setSelectedAddressId("");
+    }
+  };
+
+  const handleSelectAddress = (addressId) => {
+    const address = addresses.find((addr) => addr._id === addressId);
+    if (address) {
+      setSelectedAddressId(addressId);
+      setUseSavedAddress(true);
+      setShipping({
+        recipientName: address.recipientName || "",
+        phone: address.phone || "",
+        zipCode: address.zipCode || "",
+        address1: address.address1 || "",
+        address2: address.address2 || "",
+        memo: address.memo || "",
+      });
+    }
+  };
+
+  const handleUseNewAddress = () => {
+    setUseSavedAddress(false);
+    setSelectedAddressId("");
+    setShipping({
+      recipientName: "",
+      phone: "",
+      zipCode: "",
+      address1: "",
+      address2: "",
+      memo: "",
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -241,6 +318,41 @@ function OrderPage() {
             <section className="order-section">
               <h3 className="order-section-title">DELIVERY</h3>
               <div className="order-section-body">
+                {addresses.length > 0 && (
+                  <div className="order-field">
+                    <span className="order-field-label">배송지 선택</span>
+                    <div className="order-address-select-group">
+                      <select
+                        value={useSavedAddress ? selectedAddressId : ""}
+                        onChange={(e) => {
+                          if (e.target.value) {
+                            handleSelectAddress(e.target.value);
+                          } else {
+                            handleUseNewAddress();
+                          }
+                        }}
+                        className="order-address-select"
+                      >
+                        <option value="">새 배송지 입력</option>
+                        {addresses.map((address) => (
+                          <option key={address._id} value={address._id}>
+                            {address.isDefault && "[기본] "}
+                            {address.recipientName} - {address.address1}
+                            {address.address2 ? ` ${address.address2}` : ""}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        className="order-address-manage-btn"
+                        onClick={() => navigate("/mypage/addresses")}
+                      >
+                        배송지 관리
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="order-field-row">
                   <label className="order-field">
                     <span className="order-field-label required">

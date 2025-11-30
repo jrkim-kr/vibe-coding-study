@@ -130,6 +130,188 @@ POST /api/users/logout
 }
 ```
 
+### 현재 사용자 정보 조회
+
+```
+GET /api/users/me
+```
+
+**인증 필요:** Bearer Token
+
+**응답 (200):**
+
+```json
+{
+  "user": {
+    "_id": "...",
+    "email": "user@example.com",
+    "name": "홍길동",
+    "phone": "010-1234-5678",
+    "role": "user",
+    "addresses": [...],
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### 사용자 프로필 업데이트
+
+```
+PUT /api/users/me
+```
+
+**인증 필요:** Bearer Token
+
+**요청 본문:**
+
+```json
+{
+  "name": "홍길동",
+  "phone": "010-1234-5678"
+}
+```
+
+**응답 (200):**
+
+```json
+{
+  "message": "회원 정보가 수정되었습니다.",
+  "user": {
+    "_id": "...",
+    "email": "user@example.com",
+    "name": "홍길동",
+    "phone": "010-1234-5678",
+    "role": "user",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  }
+}
+```
+
+### 배송지 목록 조회
+
+```
+GET /api/users/me/addresses
+```
+
+**인증 필요:** Bearer Token
+
+**응답 (200):**
+
+```json
+{
+  "addresses": [
+    {
+      "_id": "...",
+      "recipientName": "홍길동",
+      "phone": "010-1234-5678",
+      "zipCode": "12345",
+      "address1": "서울시 강남구 테헤란로 123",
+      "address2": "101동 101호",
+      "memo": "부재 시 경비실에 맡겨주세요",
+      "isDefault": true
+    }
+  ]
+}
+```
+
+### 배송지 추가
+
+```
+POST /api/users/me/addresses
+```
+
+**인증 필요:** Bearer Token
+
+**요청 본문:**
+
+```json
+{
+  "recipientName": "홍길동",
+  "phone": "010-1234-5678",
+  "zipCode": "12345",
+  "address1": "서울시 강남구 테헤란로 123",
+  "address2": "101동 101호",
+  "memo": "부재 시 경비실에 맡겨주세요",
+  "isDefault": true
+}
+```
+
+**응답 (201):**
+
+```json
+{
+  "message": "배송지가 추가되었습니다.",
+  "address": {
+    "_id": "...",
+    "recipientName": "홍길동",
+    "phone": "010-1234-5678",
+    "zipCode": "12345",
+    "address1": "서울시 강남구 테헤란로 123",
+    "address2": "101동 101호",
+    "memo": "부재 시 경비실에 맡겨주세요",
+    "isDefault": true
+  }
+}
+```
+
+### 배송지 수정
+
+```
+PUT /api/users/me/addresses/:addressId
+```
+
+**인증 필요:** Bearer Token
+
+**요청 본문:**
+
+```json
+{
+  "recipientName": "홍길동",
+  "phone": "010-1234-5678",
+  "zipCode": "12345",
+  "address1": "서울시 강남구 테헤란로 123",
+  "address2": "101동 101호",
+  "memo": "부재 시 경비실에 맡겨주세요",
+  "isDefault": true
+}
+```
+
+**응답 (200):**
+
+```json
+{
+  "message": "배송지가 수정되었습니다.",
+  "address": {
+    "_id": "...",
+    "recipientName": "홍길동",
+    "phone": "010-1234-5678",
+    "zipCode": "12345",
+    "address1": "서울시 강남구 테헤란로 123",
+    "address2": "101동 101호",
+    "memo": "부재 시 경비실에 맡겨주세요",
+    "isDefault": true
+  }
+}
+```
+
+### 배송지 삭제
+
+```
+DELETE /api/users/me/addresses/:addressId
+```
+
+**인증 필요:** Bearer Token
+
+**응답 (200):**
+
+```json
+{
+  "message": "배송지가 삭제되었습니다."
+}
+```
+
 ## 관리자 API
 
 모든 관리자 API는 인증 및 관리자 권한이 필요합니다.
@@ -471,5 +653,10 @@ curl -X POST http://localhost:5000/api/admin/products \
 
 ---
 
-**문서 버전:** 1.0  
+**문서 버전:** 1.1  
 **최종 업데이트:** 2025-01-22
+
+**주요 변경사항:**
+
+- 사용자 프로필 조회/수정 API 추가 (GET/PUT /api/users/me)
+- 배송지 관리 API 추가 (GET/POST/PUT/DELETE /api/users/me/addresses)

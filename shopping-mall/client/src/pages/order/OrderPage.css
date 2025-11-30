@@ -137,6 +137,42 @@
   white-space: nowrap;
 }
 
+.order-address-select-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.order-address-select {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 3px;
+  border: 1px solid #ddd5cc;
+  background: #fbf8f2;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.order-address-manage-btn {
+  flex-shrink: 0;
+  padding: 9px 14px;
+  border-radius: 3px;
+  border: 1px solid #ddd5cc;
+  background: #fff;
+  color: var(--text-dark);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.order-address-manage-btn:hover {
+  border-color: #111;
+  background: #fbf8f2;
+}
+
 .order-payment-options {
   display: flex;
   flex-direction: column;
@@ -263,5 +299,36 @@
 @media (max-width: 900px) {
   .order-content {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .order-address-select-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .order-address-select {
+    width: 100%;
+  }
+
+  .order-address-manage-btn {
+    width: 100%;
+  }
+
+  .order-field-row {
+    flex-direction: column;
+  }
+
+  .order-zip-group {
+    flex-wrap: wrap;
+  }
+
+  .order-zip-group input {
+    min-width: 0;
+  }
+
+  .order-zip-btn {
+    width: 100%;
   }
 }

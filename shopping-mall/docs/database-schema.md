@@ -388,3 +388,6 @@ export default mongoose.model("User", userSchema);
 필드만 맞춰서 정의하면 돼.
 
 ---
+
+**문서 버전:** 1.0  
+**최종 업데이트:** 2025-01-22

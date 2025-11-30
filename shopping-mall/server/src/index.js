@@ -22,7 +22,33 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Express 미들웨어 설정
-app.use(cors()); // CORS 설정 - 모든 도메인에서 접근 허용
+// CORS 설정 - 배포된 프론트엔드 URL 허용
+const allowedOrigins = [
+  "http://localhost:3000", // 로컬 개발 환경
+  "https://shopping-mall-demo-fe.vercel.app", // 배포된 프론트엔드
+];
+
+// 환경 변수로 추가 Origin 허용 가능
+if (process.env.ALLOWED_ORIGINS) {
+  allowedOrigins.push(...process.env.ALLOWED_ORIGINS.split(","));
+}
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // origin이 없는 경우 (같은 origin 요청, Postman 등) 허용
+      if (!origin) return callback(null, true);
+
+      // 허용된 origin 목록에 있는지 확인
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("CORS 정책에 의해 차단되었습니다."));
+      }
+    },
+    credentials: true, // 쿠키 전송 허용
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

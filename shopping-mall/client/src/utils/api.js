@@ -344,7 +344,8 @@ export const userOrderAPI = {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.append("page", params.page);
     if (params.limit) queryParams.append("limit", params.limit);
-    if (params.shippingStatus) queryParams.append("shippingStatus", params.shippingStatus);
+    if (params.shippingStatus)
+      queryParams.append("shippingStatus", params.shippingStatus);
 
     const queryString = queryParams.toString();
     return apiRequest(`/api/orders${queryString ? `?${queryString}` : ""}`);
@@ -405,5 +406,49 @@ export const publicProductAPI = {
   // 공개용 상품 상세 조회
   getProductById: async (id) => {
     return apiRequest(`/api/products/${id}`);
+  },
+};
+
+// 사용자 API
+export const userAPI = {
+  // 현재 사용자 정보 조회
+  getMe: async () => {
+    return apiRequest("/api/users/me");
+  },
+
+  // 사용자 프로필 업데이트
+  updateProfile: async (profileData) => {
+    return apiRequest("/api/users/me", {
+      method: "PUT",
+      body: JSON.stringify(profileData),
+    });
+  },
+
+  // 배송지 목록 조회
+  getAddresses: async () => {
+    return apiRequest("/api/users/me/addresses");
+  },
+
+  // 배송지 추가
+  addAddress: async (addressData) => {
+    return apiRequest("/api/users/me/addresses", {
+      method: "POST",
+      body: JSON.stringify(addressData),
+    });
+  },
+
+  // 배송지 수정
+  updateAddress: async (addressId, addressData) => {
+    return apiRequest(`/api/users/me/addresses/${addressId}`, {
+      method: "PUT",
+      body: JSON.stringify(addressData),
+    });
+  },
+
+  // 배송지 삭제
+  deleteAddress: async (addressId) => {
+    return apiRequest(`/api/users/me/addresses/${addressId}`, {
+      method: "DELETE",
+    });
   },
 };

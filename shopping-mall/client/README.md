@@ -12,11 +12,13 @@ Vite와 React를 사용한 Shoppping Mall Demo 프론트엔드 애플리케이�
 ## 설치 방법
 
 1. 의존성 설치:
+
 ```bash
 npm install
 ```
 
 2. 환경 변수 설정:
+
 ```bash
 cp env.example .env
 ```
@@ -29,13 +31,15 @@ cp env.example .env
 ## 실행 방법
 
 ### 개발 모드
+
 ```bash
 npm run dev
 ```
 
-개발 서버가 `http://localhost:5173`에서 실행됩니다.
+개발 서버가 `http://localhost:3000`에서 실행됩니다.
 
 ### 프로덕션 빌드
+
 ```bash
 npm run build
 ```
@@ -43,6 +47,7 @@ npm run build
 빌드된 파일은 `dist` 폴더에 생성됩니다.
 
 ### 프로덕션 미리보기
+
 ```bash
 npm run preview
 ```
@@ -83,11 +88,23 @@ client/
 ## 라우팅
 
 ### 사용자 페이지
+
 - `/` - 메인 페이지
 - `/login` - 로그인
 - `/register` - 회원가입
+- `/products/:id` - 상품 상세 페이지
+- `/cart` - 장바구니
+- `/order` - 주문 페이지 (인증 필요)
+- `/order/complete/:id` - 주문 완료 페이지 (인증 필요)
+- `/mypage` - 마이페이지 (인증 필요)
+- `/mypage/orders` - 주문 내역 (인증 필요)
+- `/mypage/orders/:id` - 주문 상세 (인증 필요)
+- `/mypage/profile` - 회원 정보 수정 (인증 필요)
+- `/mypage/addresses` - 배송지 관리 (인증 필요)
+- `/mypage/reviews` - 리뷰 관리 (인증 필요)
 
-### 관리자 페이지
+### 관리자 페이지 (인증 + 관리자 권한 필요)
+
 - `/admin` - 대시보드
 - `/admin/products` - 상품 관리
 - `/admin/orders` - 주문 관리
@@ -96,26 +113,38 @@ client/
 
 ## 주요 기능
 
+### 사용자 기능
+
+- **회원 관리**: 회원가입, 로그인, 로그아웃, 회원 정보 수정
+- **상품 조회**: 상품 목록, 상품 상세, 카테고리별 조회
+- **장바구니**: 상품 추가/수정/삭제, 수량 변경, 서버/로컬 동기화
+- **주문 및 결제**: 주문서 작성, 배송지 선택/입력, 결제 처리 (포트원 연동)
+- **마이페이지**: 주문 내역 조회, 회원 정보 수정, 배송지 관리
+- **배송지 관리**: 배송지 추가/수정/삭제, 기본 배송지 설정, 다음 우편번호 API 연동
+- **BUY NOW**: 상품 상세 페이지에서 즉시 구매 기능
+
+### 관리자 기능
+
+- **대시보드**: 매출 통계, 주문 현황, 고객 통계
+- **상품 관리**: 등록, 수정, 삭제, 검색, Cloudinary 이미지 업로드
+- **주문 관리**: 주문 목록, 배송 상태 변경
+- **카테고리 관리**: 계층 구조 지원, 등록/수정/삭제
+- **회원 관리**: 회원 목록, 통계 조회, 상태 변경
+
 ### 이미지 업로드
+
 - Cloudinary를 통한 이미지 업로드
 - 드래그 앤 드롭 스타일 UI
 - 업로드 진행률 표시
 - 이미지 미리보기 및 삭제
 
-### 관리자 기능
-- 대시보드: 매출 통계, 주문 현황
-- 상품 관리: 등록, 수정, 삭제, 검색
-- 주문 관리: 주문 목록, 배송 상태 변경
-- 카테고리 관리: 계층 구조 지원
-- 회원 관리: 회원 목록, 통계 조회
-
 ## 환경 변수
 
-| 변수 | 설명 | 기본값 |
-| --- | --- | --- |
-| `VITE_API_BASE_URL` | 백엔드 API 서버 URL | `http://localhost:5000` |
-| `VITE_CLOUDINARY_CLOUD_NAME` | Cloudinary Cloud Name | - |
-| `VITE_CLOUDINARY_UPLOAD_PRESET` | Cloudinary Upload Preset | - |
+| 변수                            | 설명                     | 기본값                  |
+| ------------------------------- | ------------------------ | ----------------------- |
+| `VITE_API_BASE_URL`             | 백엔드 API 서버 URL      | `http://localhost:5000` |
+| `VITE_CLOUDINARY_CLOUD_NAME`    | Cloudinary Cloud Name    | -                       |
+| `VITE_CLOUDINARY_UPLOAD_PRESET` | Cloudinary Upload Preset | -                       |
 
 ## 백엔드 서버 연결
 
@@ -140,19 +169,26 @@ client/
 ## 개발 팁
 
 ### 새 페이지 추가
+
 1. `src/pages/`에 컴포넌트 생성
 2. `src/App.jsx`에 라우트 추가
 
 ### 새 컴포넌트 추가
+
 1. `src/components/`에 컴포넌트 생성
 2. 필요한 스타일 파일 생성
 
 ### API 호출
-현재는 직접 fetch를 사용하고 있습니다. 향후 axios나 React Query 도입을 고려할 수 있습니다.
+
+- `src/utils/api.js`에 모든 API 호출 함수가 정의되어 있습니다
+- 자동 토큰 갱신 기능 포함
+- 에러 처리 및 재시도 로직 포함
+- 사용자 API, 장바구니 API, 주문 API, 결제 API, 관리자 API 등으로 구성
 
 ## 빌드 및 배포
 
 ### 빌드
+
 ```bash
 npm run build
 ```
@@ -160,9 +196,21 @@ npm run build
 빌드된 파일은 `dist/` 폴더에 생성됩니다.
 
 ### 배포
+
 빌드된 `dist/` 폴더를 정적 호스팅 서비스(Vercel, Netlify 등)에 배포할 수 있습니다.
+
+**현재 배포 환경:**
+
+- Vercel: https://shopping-mall-demo-fe.vercel.app/
+
+**배포 시 필수 환경 변수:**
+
+- `VITE_API_BASE_URL`: 백엔드 API 서버 URL
+- `VITE_CLOUDINARY_CLOUD_NAME`: Cloudinary Cloud Name
+- `VITE_CLOUDINARY_UPLOAD_PRESET`: Cloudinary Upload Preset
+
+자세한 배포 가이드는 [배포 환경 설정 가이드](../docs/deployment-config.md)를 참고하세요.
 
 ---
 
 **마지막 업데이트:** 2025-01-22
-

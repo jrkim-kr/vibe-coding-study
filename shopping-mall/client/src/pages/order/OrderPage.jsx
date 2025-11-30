@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
-import { userOrderAPI, cartAPI } from "../../utils/api";
+import { userOrderAPI, cartAPI, paymentAPI } from "../../utils/api";
 import { clearCart as clearLocalCart } from "../../utils/cart";
 import "./OrderPage.css";
 
@@ -24,6 +24,14 @@ function OrderPage() {
 
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [submitting, setSubmitting] = useState(false);
+
+  // 포트원 결제 모듈 초기화
+  useEffect(() => {
+    const { IMP } = window;
+    if (IMP) {
+      IMP.init("imp47103540");
+    }
+  }, []);
 
   const { productsTotal, shippingFee, discountTotal, paymentTotal, totalQty } =
     useMemo(() => {
@@ -55,7 +63,7 @@ function OrderPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (submitting) return;
@@ -71,46 +79,123 @@ function OrderPage() {
       return;
     }
 
-    const selectedProductIds = items.map((item) => item.productId);
-
-    const submitOrder = async () => {
-      try {
-        setSubmitting(true);
-
-        const result = await userOrderAPI.createOrderFromCart({
-          shipping,
-          paymentMethod,
-          selectedProductIds,
-        });
-
-        // 서버 장바구니 비우기 (주문된 상품만 제거되지만, 클라이언트 로컬 장바구니도 정리)
-        try {
-          await cartAPI.clearCart();
-        } catch (clearError) {
-          console.warn("서버 장바구니 비우기 실패 (무시 가능):", clearError);
-        }
-        clearLocalCart();
-
-        const orderId = result.order?._id;
-
-        navigate(
-          orderId ? `/order/complete/${orderId}` : "/order/complete/unknown",
-          {
-            state: {
-              orderNumber: result.order?.orderNumber,
-              paymentTotal,
-            },
-          }
-        );
-      } catch (error) {
-        console.error("주문 생성 실패:", error);
-        alert(error.message || "주문을 생성하는 중 오류가 발생했습니다.");
-      } finally {
-        setSubmitting(false);
+    // 카드 결제인 경우 포트원 결제 요청
+    if (paymentMethod === "card") {
+      const { IMP } = window;
+      if (!IMP) {
+        alert("결제 모듈을 불러올 수 없습니다. 페이지를 새로고침해주세요.");
+        return;
       }
-    };
 
-    submitOrder();
+      const selectedProductIds = items.map((item) => item.productId);
+      const merchantUid = `order_${Date.now()}_${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+
+      // 포트원 결제 요청
+      // 테스트 모드에서는 pg 파라미터를 명시적으로 지정하는 것이 안전합니다
+      IMP.request_pay(
+        {
+          pg: "html5_inicis", // KG이니시스 (테스트 모드에서도 동일)
+          pay_method: "card",
+          merchant_uid: merchantUid,
+          name:
+            items.length === 1
+              ? items[0].name
+              : `${items[0].name} 외 ${items.length - 1}개`,
+          amount: paymentTotal,
+          buyer_name: shipping.recipientName,
+          buyer_tel: shipping.phone,
+          buyer_email: "", // 이메일은 선택사항
+        },
+        async (rsp) => {
+          try {
+            setSubmitting(true);
+
+            if (rsp.success) {
+              // 결제 성공 - 서버에서 결제 검증
+              const verifyResult = await paymentAPI.verifyPayment(rsp.imp_uid);
+
+              if (!verifyResult.success) {
+                throw new Error("결제 검증에 실패했습니다.");
+              }
+
+              // 결제 검증 성공 후 주문 생성
+              const result = await userOrderAPI.createOrderFromCart({
+                shipping,
+                paymentMethod,
+                selectedProductIds,
+                impUid: rsp.imp_uid,
+                merchantUid: merchantUid,
+              });
+
+              // 서버 장바구니 비우기
+              try {
+                await cartAPI.clearCart();
+              } catch (clearError) {
+                console.warn(
+                  "서버 장바구니 비우기 실패 (무시 가능):",
+                  clearError
+                );
+              }
+              clearLocalCart();
+
+              const orderId = result.order?._id;
+
+              navigate(
+                orderId
+                  ? `/order/complete/${orderId}`
+                  : "/order/complete/unknown",
+                {
+                  state: {
+                    orderNumber: result.order?.orderNumber,
+                    paymentTotal,
+                  },
+                }
+              );
+            } else {
+              // 결제 실패
+              let errorMessage = rsp.error_msg || "알 수 없는 오류";
+
+              // 에러 코드에 따른 안내 메시지
+              if (rsp.error_code) {
+                const errorCode = rsp.error_code;
+
+                // PG사 설정 관련 오류
+                if (
+                  errorCode === "F0004" ||
+                  errorMessage.includes("사업자번호")
+                ) {
+                  errorMessage = `결제 설정 오류: 포트원 대시보드에서 KG이니시스 채널 설정을 확인해주세요.\n\n[테스트 모드인 경우]\n1. 결제 연동 → 테스트 → KG이니시스 채널 설정 확인\n2. 웹표준결제 signkey가 설정되어 있는지 확인\n   (필수 값: SU5JTElURV9UUklQTEVERVNfS0VZU1RS)\n3. PG상점아이디(MID)가 "INIpayTest"로 설정되어 있는지 확인\n\n[실연동 모드인 경우]\n1. 실제 MID, 사업자번호, 비밀번호가 올바르게 입력되었는지 확인\n\n원본 에러: ${errorMessage}`;
+                } else if (errorCode === "F0001") {
+                  errorMessage = `결제 모듈 오류: 포트원 결제 모듈 초기화를 확인해주세요.\n\n에러: ${errorMessage}`;
+                } else if (errorCode === "F0002") {
+                  errorMessage = `결제 정보 오류: 결제 정보를 확인해주세요.\n\n에러: ${errorMessage}`;
+                }
+              }
+
+              console.error("결제 실패 상세:", {
+                success: rsp.success,
+                error_code: rsp.error_code,
+                error_msg: rsp.error_msg,
+                imp_uid: rsp.imp_uid,
+                merchant_uid: rsp.merchant_uid,
+              });
+
+              alert(`결제에 실패했습니다:\n\n${errorMessage}`);
+              setSubmitting(false);
+            }
+          } catch (error) {
+            console.error("결제 처리 실패:", error);
+            alert(error.message || "결제 처리 중 오류가 발생했습니다.");
+            setSubmitting(false);
+          }
+        }
+      );
+    } else {
+      // 카드 외 결제 수단 (현재는 미지원)
+      alert("현재 신용/체크카드 결제만 지원됩니다.");
+    }
   };
 
   if (!items.length) {
@@ -141,7 +226,7 @@ function OrderPage() {
 
   return (
     <div className="order-page">
-      <MainHeader />
+      <Header />
 
       <main className="order-main">
         <header className="order-header">
@@ -279,23 +364,18 @@ function OrderPage() {
               <h3 className="order-section-title">ITEMS</h3>
               <div className="order-section-body order-items-list">
                 {items.map((item) => (
-                  <article
-                    key={item.productId}
-                    className="order-item-row"
-                  >
+                  <article key={item.productId} className="order-item-row">
                     <div className="order-item-image">
                       <img src={item.image} alt={item.name} />
                     </div>
                     <div className="order-item-info">
                       <h4 className="order-item-name">{item.name}</h4>
                       <p className="order-item-meta">
-                        수량 {item.quantity}개 · ₩{" "}
-                        {item.price.toLocaleString()}
+                        수량 {item.quantity}개 · ₩ {item.price.toLocaleString()}
                       </p>
                     </div>
                     <div className="order-item-total">
-                      ₩{" "}
-                      {(item.price * (item.quantity || 0)).toLocaleString()}
+                      ₩ {(item.price * (item.quantity || 0)).toLocaleString()}
                     </div>
                   </article>
                 ))}
@@ -351,5 +431,3 @@ function OrderPage() {
 }
 
 export default OrderPage;
-
-

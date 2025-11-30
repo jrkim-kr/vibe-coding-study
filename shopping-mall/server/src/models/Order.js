@@ -87,6 +87,24 @@ const orderSchema = new mongoose.Schema(
       enum: ["결제대기", "결제완료", "결제실패", "환불완료"],
       default: "결제대기",
     },
+    payment: {
+      impUid: {
+        type: String,
+        default: null,
+      },
+      merchantUid: {
+        type: String,
+        default: null,
+      },
+      payMethod: {
+        type: String,
+        default: null,
+      },
+      paidAt: {
+        type: Date,
+        default: null,
+      },
+    },
     shipping: shippingSchema,
     isDeleted: {
       type: Boolean,
@@ -124,4 +142,3 @@ orderSchema.statics.findActive = function (query = {}) {
 const Order = mongoose.model("Order", orderSchema);
 
 export default Order;
-

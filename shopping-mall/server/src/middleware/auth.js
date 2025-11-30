@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
-// JWT_SECRET을 userController와 동일하게 설정
+// JWT_SECRET을 authController와 동일하게 설정
 const JWT_SECRET = process.env.JWT_SECRET || "dev-secret";
 
 /**

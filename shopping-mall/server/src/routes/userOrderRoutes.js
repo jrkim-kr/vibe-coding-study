@@ -4,7 +4,7 @@ import {
   createOrderFromCart,
   getMyOrders,
   getMyOrderById,
-} from "../controllers/userOrderController.js";
+} from "../controllers/customerOrderController.js";
 
 const router = express.Router();
 
@@ -21,5 +21,3 @@ router.get("/:id", getMyOrderById);
 router.post("/", createOrderFromCart);
 
 export default router;
-
-

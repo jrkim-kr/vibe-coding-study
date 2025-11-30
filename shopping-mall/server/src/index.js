@@ -13,6 +13,7 @@ import customerRoutes from "./routes/customerRoutes.js";
 import publicProductRoutes from "./routes/publicProductRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import userOrderRoutes from "./routes/userOrderRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 
 // 환경 변수 로드
 dotenv.config();
@@ -78,6 +79,9 @@ app.use("/api/cart", cartRoutes);
 
 // 사용자 주문 API
 app.use("/api/orders", userOrderRoutes);
+
+// 결제 API
+app.use("/api/payments", paymentRoutes);
 
 // MongoDB 연결 상태 확인
 mongoose.connection.on("connected", () => {

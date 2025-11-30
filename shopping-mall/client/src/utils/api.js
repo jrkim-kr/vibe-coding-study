@@ -50,13 +50,19 @@ const apiRequest = async (endpoint, options = {}) => {
       // 401 Unauthorized인 경우
       if (response.status === 401) {
         // 토큰 만료인 경우 자동 갱신 시도
-        if (data.error && (data.error.includes("만료") || data.error.includes("expired"))) {
+        if (
+          data.error &&
+          (data.error.includes("만료") || data.error.includes("expired"))
+        ) {
           try {
-            const refreshResponse = await fetch(`${API_BASE_URL}/api/users/token/refresh`, {
-              method: "POST",
-              credentials: "include", // 쿠키 포함
-            });
-            
+            const refreshResponse = await fetch(
+              `${API_BASE_URL}/api/users/token/refresh`,
+              {
+                method: "POST",
+                credentials: "include", // 쿠키 포함
+              }
+            );
+
             if (refreshResponse.ok) {
               const refreshData = await refreshResponse.json();
               // 새 토큰 저장
@@ -71,31 +77,37 @@ const apiRequest = async (endpoint, options = {}) => {
               };
               const retryResponse = await fetch(url, retryConfig);
               const retryData = await retryResponse.json();
-              
+
               if (!retryResponse.ok) {
-                throw new Error(retryData.error || "요청 처리 중 오류가 발생했습니다.");
+                throw new Error(
+                  retryData.error || "요청 처리 중 오류가 발생했습니다."
+                );
               }
-              
+
               return retryData;
             }
           } catch (refreshError) {
             console.error("토큰 갱신 실패:", refreshError);
           }
         }
-        
+
         // 토큰 갱신 실패 또는 다른 인증 오류인 경우
         localStorage.removeItem("authToken");
         localStorage.removeItem("currentUser");
-        
+
         // 관리자 페이지에서는 에러만 던지고, ProtectedRoute가 리다이렉트 처리
-        const errorMessage = data.error || "인증이 만료되었습니다. 다시 로그인해주세요.";
+        const errorMessage =
+          data.error || "인증이 만료되었습니다. 다시 로그인해주세요.";
         throw new Error(errorMessage);
       }
       // 서버에서 보낸 상세 에러 메시지 사용
-      const errorMessage = data.error || data.message || "요청 처리 중 오류가 발생했습니다.";
+      const errorMessage =
+        data.error || data.message || "요청 처리 중 오류가 발생했습니다.";
       const details = data.details || data.errorName || data.errorCode || "";
-      const fullErrorMessage = details ? `${errorMessage} (${details})` : errorMessage;
-      
+      const fullErrorMessage = details
+        ? `${errorMessage} (${details})`
+        : errorMessage;
+
       console.error("API 에러 상세:", {
         endpoint,
         status: response.status,
@@ -343,10 +355,33 @@ export const userOrderAPI = {
   },
 
   // 장바구니 기반 주문 생성
-  createOrderFromCart: async ({ shipping, paymentMethod, selectedProductIds }) => {
+  createOrderFromCart: async ({
+    shipping,
+    paymentMethod,
+    selectedProductIds,
+    impUid,
+    merchantUid,
+  }) => {
     return apiRequest("/api/orders", {
       method: "POST",
-      body: JSON.stringify({ shipping, paymentMethod, selectedProductIds }),
+      body: JSON.stringify({
+        shipping,
+        paymentMethod,
+        selectedProductIds,
+        impUid,
+        merchantUid,
+      }),
+    });
+  },
+};
+
+// 결제 API
+export const paymentAPI = {
+  // 결제 검증
+  verifyPayment: async (impUid) => {
+    return apiRequest("/api/payments/verify", {
+      method: "POST",
+      body: JSON.stringify({ impUid }),
     });
   },
 };
@@ -363,9 +398,7 @@ export const publicProductAPI = {
     if (params.status) queryParams.append("status", params.status);
 
     const queryString = queryParams.toString();
-    return apiRequest(
-      `/api/products${queryString ? `?${queryString}` : ""}`
-    );
+    return apiRequest(`/api/products${queryString ? `?${queryString}` : ""}`);
   },
 
   // 공개용 상품 상세 조회

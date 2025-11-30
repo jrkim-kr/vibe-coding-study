@@ -1,0 +1,114 @@
+.order-complete-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-dark);
+  padding: 32px clamp(16px, 4vw, 56px) 80px;
+}
+
+.order-complete-main {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.order-complete-header {
+  padding: 8px 0 24px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 24px;
+}
+
+.order-complete-title {
+  font-size: 20px;
+  letter-spacing: 0.3em;
+  margin: 0 0 8px;
+}
+
+.order-complete-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.order-complete-content {
+  padding-top: 24px;
+}
+
+.order-complete-card {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ebe6de;
+  padding: 28px 24px 24px;
+  text-align: center;
+}
+
+.order-complete-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.order-complete-value {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.order-complete-amount {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.order-complete-message {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.order-complete-text {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.order-complete-text.error {
+  color: #c0392b;
+}
+
+.order-complete-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.order-complete-btn {
+  min-width: 140px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 3px;
+  border: 1px solid var(--border-color);
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.order-complete-btn.primary {
+  border-color: #111;
+  background: #111;
+  color: #fff;
+  letter-spacing: 0.08em;
+}
+
+.order-complete-btn.secondary {
+  background: #fff;
+}
+
+@media (max-width: 640px) {
+  .order-complete-actions {
+    flex-direction: column;
+  }
+
+  .order-complete-btn {
+    width: 100%;
+  }
+}
+
+

@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MainHeader from "../components/MainHeader";
+import Header from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer";
 import {
   getCartItems,
   updateCartItemQuantity,
   removeCartItem,
   clearCart,
   setCartItems,
-} from "../utils/cart";
-import { cartAPI } from "../utils/api";
-import "./MainPage.css";
+} from "../../utils/cart";
+import { cartAPI } from "../../utils/api";
 import "./CartPage.css";
 
 function CartPage() {
@@ -130,14 +130,17 @@ function CartPage() {
       alert("주문할 상품을 선택해주세요.");
       return;
     }
-    alert(
-      `선택된 ${totalQuantity}개 상품을 기준으로 주문 기능은 추후 구현 예정입니다.`
-    );
+
+    navigate("/order", {
+      state: {
+        items: selectedItems,
+      },
+    });
   };
 
   return (
     <div className="cart-page">
-      <MainHeader />
+      <Header />
 
       <main className="cart-main">
         <header className="cart-header">
@@ -279,6 +282,7 @@ function CartPage() {
           </section>
         )}
       </main>
+      <Footer />
     </div>
   );
 }

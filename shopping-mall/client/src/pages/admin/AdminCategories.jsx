@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import AdminSidebar from "../components/AdminSidebar";
-import AdminHeader from "../components/AdminHeader";
-import CategoryModal from "../components/CategoryModal";
-import { categoryAPI } from "../utils/api";
+import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminHeader from "../../components/admin/AdminHeader";
+import CategoryModal from "../../components/modals/CategoryModal";
+import { categoryAPI } from "../../utils/api";
 import "./AdminCategories.css";
 
 function AdminCategories() {

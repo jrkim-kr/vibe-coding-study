@@ -1,0 +1,170 @@
+/* MyPage 컴포넌트 전용 스타일 */
+
+.mypage-welcome-card {
+  background: #f9f6f2;
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.mypage-welcome-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.mypage-welcome-email {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.mypage-quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.mypage-quick-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ebe6de;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.mypage-quick-link:hover {
+  border-color: var(--text-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.mypage-quick-link-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.mypage-quick-link-text {
+  flex: 1;
+}
+
+.mypage-quick-link-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.mypage-quick-link-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.mypage-recent-orders {
+  margin-top: 8px;
+}
+
+.mypage-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.mypage-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.mypage-section-more {
+  font-size: 13px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.mypage-section-more:hover {
+  color: var(--text-dark);
+}
+
+.mypage-recent-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mypage-recent-item {
+  padding: 16px;
+  background: #f9f6f2;
+  border-radius: 6px;
+  border: 1px solid #ebe6de;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mypage-recent-item:hover {
+  border-color: var(--text-dark);
+  transform: translateX(4px);
+}
+
+.mypage-recent-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.mypage-recent-number {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.mypage-recent-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.mypage-recent-status {
+  display: flex;
+  align-items: center;
+}
+
+.mypage-recent-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #fff;
+  border: 1px solid #ddd5cc;
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--text-dark);
+}
+
+.mypage-recent-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.mypage-recent-amount {
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+@media (max-width: 640px) {
+  .mypage-quick-links {
+    grid-template-columns: 1fr;
+  }
+}

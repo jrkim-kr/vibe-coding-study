@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import AdminSidebar from "../components/AdminSidebar";
-import AdminHeader from "../components/AdminHeader";
-import ProductModal from "../components/ProductModal";
-import { productAPI, categoryAPI } from "../utils/api";
+import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminHeader from "../../components/admin/AdminHeader";
+import ProductModal from "../../components/modals/ProductModal";
+import { productAPI, categoryAPI } from "../../utils/api";
 import "./AdminProducts.css";
 
 const statuses = ["판매중", "판매중지", "품절"];

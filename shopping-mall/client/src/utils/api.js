@@ -325,6 +325,32 @@ export const cartAPI = {
   },
 };
 
+// 사용자 주문 API
+export const userOrderAPI = {
+  // 내 주문 목록 조회
+  getMyOrders: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append("page", params.page);
+    if (params.limit) queryParams.append("limit", params.limit);
+
+    const queryString = queryParams.toString();
+    return apiRequest(`/api/orders${queryString ? `?${queryString}` : ""}`);
+  },
+
+  // 내 주문 상세 조회
+  getMyOrderById: async (id) => {
+    return apiRequest(`/api/orders/${id}`);
+  },
+
+  // 장바구니 기반 주문 생성
+  createOrderFromCart: async ({ shipping, paymentMethod, selectedProductIds }) => {
+    return apiRequest("/api/orders", {
+      method: "POST",
+      body: JSON.stringify({ shipping, paymentMethod, selectedProductIds }),
+    });
+  },
+};
+
 // 메인 페이지 등에서 사용하는 공개 상품 조회 API
 export const publicProductAPI = {
   // 공개용 상품 목록 조회

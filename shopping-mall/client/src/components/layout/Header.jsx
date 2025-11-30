@@ -1,18 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getCartCount,
   CART_UPDATED_EVENT,
   clearCart,
   setCartItems,
-} from "../utils/cart";
-import { cartAPI } from "../utils/api";
+} from "../../utils/cart";
+import { cartAPI } from "../../utils/api";
+import "./Header.css";
 
-function MainHeader() {
+function Header() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -77,6 +80,23 @@ function MainHeader() {
     };
   }, []);
 
+  // 드롭다운 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showDropdown]);
+
   const handleLogout = () => {
     // 로컬 장바구니 비우기 및 뱃지 0으로
     clearCart();
@@ -87,7 +107,13 @@ function MainHeader() {
     localStorage.removeItem("currentUser");
     setUser(null);
     setIsLoggedIn(false);
+    setShowDropdown(false);
     navigate("/");
+  };
+
+  const handleMenuClick = (path) => {
+    navigate(path);
+    setShowDropdown(false);
   };
 
   return (
@@ -145,16 +171,73 @@ function MainHeader() {
                 </button>
               </>
             ) : (
-              <div className="cu-user-menu">
-                <span className="cu-user-name">{user?.name || "사용자"}</span>
+              <div className="cu-user-menu" ref={dropdownRef}>
                 <button
                   type="button"
-                  className="cu-logout-btn"
-                  onClick={handleLogout}
-                  title="로그아웃"
+                  className="cu-user-name"
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  title="마이페이지"
                 >
-                  로그아웃
+                  {user?.name || "사용자"}
+                  <svg
+                    className="cu-dropdown-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
                 </button>
+                {showDropdown && (
+                  <div className="cu-dropdown-menu">
+                    <button
+                      type="button"
+                      className="cu-dropdown-item"
+                      onClick={() => handleMenuClick("/mypage")}
+                    >
+                      마이페이지
+                    </button>
+                    <button
+                      type="button"
+                      className="cu-dropdown-item"
+                      onClick={() => handleMenuClick("/mypage/orders")}
+                    >
+                      주문 내역
+                    </button>
+                    <button
+                      type="button"
+                      className="cu-dropdown-item"
+                      onClick={() => handleMenuClick("/mypage/profile")}
+                    >
+                      회원 정보
+                    </button>
+                    <button
+                      type="button"
+                      className="cu-dropdown-item"
+                      onClick={() => handleMenuClick("/mypage/addresses")}
+                    >
+                      배송지 관리
+                    </button>
+                    <button
+                      type="button"
+                      className="cu-dropdown-item"
+                      onClick={() => handleMenuClick("/mypage/reviews")}
+                    >
+                      리뷰 관리
+                    </button>
+                    <div className="cu-dropdown-divider" />
+                    <button
+                      type="button"
+                      className="cu-dropdown-item"
+                      onClick={handleLogout}
+                    >
+                      로그아웃
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </>
@@ -202,6 +285,4 @@ function MainHeader() {
   );
 }
 
-export default MainHeader;
-
-
+export default Header;

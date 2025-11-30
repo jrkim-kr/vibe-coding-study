@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import ImageUploader from "./ImageUploader";
-import { uploadMultipleImages } from "../utils/cloudinary";
+import { uploadMultipleImages } from "../../utils/cloudinary";
 import "./ProductModal.css";
 
 const createInitialForm = (categories, statuses) => ({

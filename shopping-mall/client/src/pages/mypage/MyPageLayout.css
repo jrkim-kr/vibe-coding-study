@@ -1,0 +1,94 @@
+/* 마이페이지 공통 레이아웃 스타일 */
+.mypage-layout-wrapper {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  color: var(--text-dark);
+  padding: 32px clamp(16px, 4vw, 56px) 80px;
+  position: relative;
+}
+
+.mypage-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+}
+
+.mypage-content {
+  min-height: 400px;
+}
+
+/* 마이페이지 공통 콘텐츠 스타일 */
+.mypage-main {
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #ebe6de;
+  padding: 32px;
+}
+
+.mypage-main-header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0ebe4;
+}
+
+.mypage-main-title {
+  font-size: 20px;
+  letter-spacing: 0.2em;
+  margin: 0 0 8px;
+}
+
+.mypage-main-subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.mypage-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.mypage-empty {
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.mypage-empty.error {
+  color: #d32f2f;
+}
+
+.mypage-empty-btn {
+  display: block;
+  margin: 16px auto 0;
+  padding: 10px 20px;
+  border-radius: 3px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mypage-empty-btn:hover {
+  background: #333;
+}
+
+@media (max-width: 900px) {
+  .mypage-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .mypage-main {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,106 @@
+.mypage-profile-form {
+  max-width: 600px;
+}
+
+.mypage-form-group {
+  margin-bottom: 24px;
+}
+
+.mypage-form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+}
+
+.mypage-form-required {
+  color: #c0392b;
+}
+
+.mypage-form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd5cc;
+  background: #fbf8f2;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.mypage-form-input:focus {
+  outline: none;
+  border-color: var(--text-dark);
+  background: #fff;
+}
+
+.mypage-form-input.error {
+  border-color: #c0392b;
+}
+
+.mypage-form-input-disabled {
+  background: #f0ebe4;
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.mypage-form-help {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.mypage-form-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #c0392b;
+}
+
+.mypage-error-message {
+  padding: 12px 16px;
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 4px;
+  color: #c0392b;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.mypage-success-message {
+  padding: 12px 16px;
+  background: #efe;
+  border: 1px solid #cfc;
+  border-radius: 4px;
+  color: #2c7;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.mypage-form-actions {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #f0ebe4;
+}
+
+.mypage-form-submit {
+  padding: 12px 24px;
+  border-radius: 4px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mypage-form-submit:hover:not(:disabled) {
+  background: #333;
+}
+
+.mypage-form-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+

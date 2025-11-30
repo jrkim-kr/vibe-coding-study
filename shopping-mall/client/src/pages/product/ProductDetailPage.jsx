@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { publicProductAPI, cartAPI } from "../utils/api";
-import MainHeader from "../components/MainHeader";
-import { addToCart } from "../utils/cart";
-import "./MainPage.css";
+import { publicProductAPI, cartAPI } from "../../utils/api";
+import Header from "../../components/layout/Header";
+import Footer from "../../components/layout/Footer";
+import { addToCart } from "../../utils/cart";
 import "./ProductDetailPage.css";
 
 function ProductDetailPage() {
@@ -87,10 +87,11 @@ function ProductDetailPage() {
   if (loading) {
     return (
       <div className="pd-page">
-        <MainHeader />
+        <Header />
         <div className="pd-container">
           <p className="pd-message">상품 정보를 불러오는 중입니다...</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -98,10 +99,11 @@ function ProductDetailPage() {
   if (error) {
     return (
       <div className="pd-page">
-        <MainHeader />
+        <Header />
         <div className="pd-container">
           <p className="pd-message pd-error">{error}</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -109,10 +111,11 @@ function ProductDetailPage() {
   if (!product) {
     return (
       <div className="pd-page">
-        <MainHeader />
+        <Header />
         <div className="pd-container">
           <p className="pd-message pd-error">상품을 찾을 수 없습니다.</p>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -137,7 +140,7 @@ function ProductDetailPage() {
 
   return (
     <div className="pd-page">
-      <MainHeader />
+      <Header />
       <main className="pd-main">
         <section className="pd-gallery">
           <div className="pd-main-image">
@@ -243,6 +246,7 @@ function ProductDetailPage() {
           )}
         </section>
       </main>
+      <Footer />
     </div>
   );
 }

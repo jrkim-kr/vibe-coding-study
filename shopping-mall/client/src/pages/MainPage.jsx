@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import ProductCard from "../components/ProductCard";
-import SectionHeader from "../components/SectionHeader";
-import FooterColumn from "../components/FooterColumn";
-import MainHeader from "../components/MainHeader";
+import ProductCard from "../components/product/ProductCard";
+import SectionHeader from "../components/ui/SectionHeader";
+import Header from "../components/layout/Header";
+import Footer from "../components/layout/Footer";
 import { publicProductAPI } from "../utils/api";
 import "./MainPage.css";
 
@@ -67,7 +67,7 @@ function MainPage() {
 
   return (
     <div className="main-page">
-      <MainHeader />
+      <Header />
 
       <section className="cu-hero">
         <div className="cu-hero-image" role="img" aria-label="winter look" />
@@ -116,31 +116,7 @@ function MainPage() {
         </div>
       </section>
 
-      <footer className="cu-footer">
-        <div className="cu-footer-grid">
-          <FooterColumn
-            title="CLIENT SERVICES"
-            items={["ORDERS", "TRACKING"]}
-          />
-          <FooterColumn
-            title="COMPANY"
-            items={["ABOUT", "LEGAL", "PRIVACY POLICY"]}
-          />
-          <FooterColumn
-            title="COMMUNITY"
-            items={["NOTICE", "Q&A", "REVIEW", "CELEBRITY"]}
-          />
-          <FooterColumn
-            title="CUSTOMER CENTER"
-            items={["1:1 KAKAO", "INSTAGRAM"]}
-          />
-        </div>
-        <p className="cu-footer-info">
-          © Shoppping Mall Demo Inc. All rights reserved. BUSINESS NUMBER:
-          123-45-67890 ONLINE LICENSE: 2025-SEOUL-0001 ADDRESS: 123 Demo Street,
-          Seoul, Korea EMAIL support@shopppingmall.demo PHONE 02-123-4567
-        </p>
-      </footer>
+      <Footer />
 
       <button className="cu-chat-btn" aria-label="Kakao 상담">
         <span />

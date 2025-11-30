@@ -1,0 +1,114 @@
+.mypage-reviews-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mypage-review-item {
+  padding: 20px;
+  background: #f9f6f2;
+  border-radius: 6px;
+  border: 1px solid #ebe6de;
+}
+
+.mypage-review-product {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #ebe6de;
+}
+
+.mypage-review-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.mypage-review-product-info {
+  flex: 1;
+}
+
+.mypage-review-product-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.mypage-review-date {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.mypage-review-content {
+  margin-bottom: 16px;
+}
+
+.mypage-review-rating {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.mypage-review-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  margin-bottom: 12px;
+}
+
+.mypage-review-images {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mypage-review-img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ebe6de;
+}
+
+.mypage-review-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.mypage-review-edit,
+.mypage-review-delete {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mypage-review-edit:hover {
+  border-color: var(--text-dark);
+  background: #f9f6f2;
+}
+
+.mypage-review-delete {
+  color: #c0392b;
+  border-color: #fcc;
+}
+
+.mypage-review-delete:hover {
+  background: #fee;
+  border-color: #c0392b;
+}
+
+.mypage-empty-desc {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+

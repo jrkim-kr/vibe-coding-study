@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import AdminSidebar from "../components/AdminSidebar";
-import AdminHeader from "../components/AdminHeader";
-import KPICard from "../components/KPICard";
-import RecentSales from "../components/RecentSales";
+import AdminSidebar from "../../components/admin/AdminSidebar";
+import AdminHeader from "../../components/admin/AdminHeader";
+import KPICard from "../../components/admin/KPICard";
+import RecentSales from "../../components/admin/RecentSales";
 import "./AdminDashboard.css";
 
 function AdminDashboard() {

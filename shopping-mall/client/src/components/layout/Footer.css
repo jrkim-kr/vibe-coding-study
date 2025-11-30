@@ -1,0 +1,25 @@
+.cu-footer {
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+}
+
+.cu-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.cu-footer-info {
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .cu-footer-grid {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+}
+

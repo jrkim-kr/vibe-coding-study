@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { publicProductAPI, cartAPI } from "../../utils/api";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
@@ -8,6 +8,7 @@ import "./ProductDetailPage.css";
 
 function ProductDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [loading, setLoading] = useState(true);
@@ -82,6 +83,36 @@ function ProductDetailPage() {
         alert(error.message || "장바구니 동기화 중 오류가 발생했습니다.");
       }
     }
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+
+    const price =
+      typeof product.price === "number"
+        ? product.price
+        : parseInt(product.price ?? "0", 10) || 0;
+
+    const mainImage =
+      selectedImage ||
+      (Array.isArray(product.images) && product.images[0]) ||
+      "https://via.placeholder.com/800x800?text=Product";
+
+    // 주문 페이지로 이동 (OrderPage가 기대하는 형식으로 데이터 전달)
+    navigate("/order", {
+      state: {
+        items: [
+          {
+            productId: product._id || product.id,
+            name: product.name,
+            price: price,
+            quantity: quantity,
+            image: mainImage,
+            stock: product.stock,
+          },
+        ],
+      },
+    });
   };
 
   if (loading) {
@@ -225,6 +256,7 @@ function ProductDetailPage() {
               type="button"
               className="pd-btn pd-buy"
               disabled={isSoldOut}
+              onClick={handleBuyNow}
             >
               BUY NOW
             </button>

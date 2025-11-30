@@ -74,26 +74,80 @@
   margin: 0;
 }
 
-.admin-user-name {
-  font-size: 14px;
-  font-weight: 500;
-  color: #1f1a17;
+.admin-user-menu {
+  position: relative;
 }
 
-.admin-logout-btn {
-  padding: 8px 16px;
+.admin-user-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
   background: transparent;
   color: #1f1a17;
   border: 1px solid #e5e5e5;
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.admin-logout-btn:hover {
+.admin-user-name:hover {
   background: #f5f5f5;
   border-color: #1f1a17;
+}
+
+.admin-dropdown-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s;
+}
+
+.admin-user-name:hover .admin-dropdown-icon {
+  transform: translateY(1px);
+}
+
+.admin-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+.admin-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 14px;
+  color: #1f1a17;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.admin-dropdown-item:hover {
+  background: #f5f5f5;
+}
+
+.admin-dropdown-item.active {
+  background: #f9f6f2;
+  color: #1f1a17;
+  font-weight: 500;
+}
+
+.admin-dropdown-divider {
+  height: 1px;
+  background: #e5e5e5;
+  margin: 8px 0;
 }
 

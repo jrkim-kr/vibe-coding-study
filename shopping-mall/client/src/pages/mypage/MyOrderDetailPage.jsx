@@ -46,6 +46,36 @@ function MyOrderDetailPage() {
     });
   };
 
+  const getPaymentStatusText = (status) => {
+    switch (status) {
+      case "결제완료":
+        return "결제 완료";
+      case "결제대기":
+        return "결제 대기";
+      case "결제실패":
+        return "결제 실패";
+      case "환불완료":
+        return "환불 완료";
+      default:
+        return status || "결제 대기";
+    }
+  };
+
+  const getPaymentStatusClass = (status) => {
+    switch (status) {
+      case "결제완료":
+        return "payment-status-complete";
+      case "결제대기":
+        return "payment-status-pending";
+      case "결제실패":
+        return "payment-status-failed";
+      case "환불완료":
+        return "payment-status-refunded";
+      default:
+        return "payment-status-pending";
+    }
+  };
+
   return (
     <div className="mypage-layout-wrapper">
       <Header />
@@ -86,6 +116,12 @@ function MyOrderDetailPage() {
                 <span className="my-order-detail-label">배송상태</span>
                 <span className="my-order-detail-value">
                   {order.shippingStatus || "주문접수"}
+                </span>
+              </div>
+              <div className="my-order-detail-row">
+                <span className="my-order-detail-label">결제상태</span>
+                <span className={`my-order-detail-value ${getPaymentStatusClass(order.paymentStatus)}`}>
+                  {getPaymentStatusText(order.paymentStatus || "결제대기")}
                 </span>
               </div>
             </div>

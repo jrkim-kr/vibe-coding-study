@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   getCartCount,
   CART_UPDATED_EVENT,
@@ -9,13 +9,39 @@ import {
 import { cartAPI } from "../../utils/api";
 import "./Header.css";
 
+const adminMenuItems = [
+  { id: "dashboard", label: "대시보드", path: "/admin" },
+  { id: "products", label: "상품 관리", path: "/admin/products" },
+  { id: "orders", label: "주문 관리", path: "/admin/orders" },
+  { id: "categories", label: "카테고리 관리", path: "/admin/categories" },
+  { id: "customers", label: "회원 관리", path: "/admin/customers" },
+];
+
 function Header() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [user, setUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+
+  // 현재 활성 메뉴 확인 (어드민용)
+  const getActiveMenuId = () => {
+    const path = location.pathname;
+    if (path === "/admin" || path === "/admin/") {
+      return "dashboard";
+    } else if (path.includes("/products")) {
+      return "products";
+    } else if (path.includes("/orders")) {
+      return "orders";
+    } else if (path.includes("/categories")) {
+      return "categories";
+    } else if (path.includes("/customers")) {
+      return "customers";
+    }
+    return null;
+  };
 
   useEffect(() => {
     const checkAuth = () => {
@@ -97,7 +123,14 @@ function Header() {
     };
   }, [showDropdown]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // 서버 장바구니 비우기
+    try {
+      await cartAPI.clearCart();
+    } catch (error) {
+      console.warn("서버 장바구니 비우기 실패 (무시 가능):", error);
+    }
+
     // 로컬 장바구니 비우기 및 뱃지 0으로
     clearCart();
     setCartCount(0);
@@ -148,28 +181,54 @@ function Header() {
         {isLoggedIn ? (
           <>
             {user?.role === "admin" ? (
-              <>
+              <div className="cu-user-menu" ref={dropdownRef}>
                 <button
                   type="button"
-                  className="cu-admin-btn"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    navigate("/admin");
-                  }}
-                  title="관리자 페이지"
+                  className="cu-user-name"
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  title="관리자 메뉴"
                 >
-                  어드민
+                  {user?.name || "관리자"}
+                  <svg
+                    className="cu-dropdown-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
                 </button>
-                <button
-                  type="button"
-                  className="cu-logout-btn"
-                  onClick={handleLogout}
-                  title="로그아웃"
-                >
-                  로그아웃
-                </button>
-              </>
+                {showDropdown && (
+                  <div className="cu-dropdown-menu">
+                    {adminMenuItems.map((item) => {
+                      const isActive = getActiveMenuId() === item.id;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          className={`cu-dropdown-item ${
+                            isActive ? "active" : ""
+                          }`}
+                          onClick={() => handleMenuClick(item.path)}
+                        >
+                          {item.label}
+                        </button>
+                      );
+                    })}
+                    <div className="cu-dropdown-divider" />
+                    <button
+                      type="button"
+                      className="cu-dropdown-item"
+                      onClick={handleLogout}
+                    >
+                      로그아웃
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="cu-user-menu" ref={dropdownRef}>
                 <button

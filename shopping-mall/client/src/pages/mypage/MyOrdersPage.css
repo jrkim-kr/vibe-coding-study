@@ -216,6 +216,27 @@
   text-align: right;
 }
 
+/* 결제 상태 스타일 */
+.payment-status-complete {
+  color: #0f5132;
+  font-weight: 500;
+}
+
+.payment-status-pending {
+  color: #856404;
+  font-weight: 500;
+}
+
+.payment-status-failed {
+  color: #721c24;
+  font-weight: 500;
+}
+
+.payment-status-refunded {
+  color: #41464b;
+  font-weight: 500;
+}
+
 .my-order-detail-items {
   list-style: none;
   padding: 0;

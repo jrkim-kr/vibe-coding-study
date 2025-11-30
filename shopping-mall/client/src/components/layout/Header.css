@@ -28,7 +28,10 @@
   gap: 12px;
 }
 
-.cu-actions button:not(.cu-admin-btn):not(.cu-logout-btn):not(.cu-user-name) {
+.cu-actions
+  button:not(.cu-admin-btn):not(.cu-logout-btn):not(.cu-user-name):not(
+    .cu-dropdown-item
+  ) {
   border: none;
   background: none;
   padding: 0;
@@ -98,37 +101,31 @@
 
 .cu-user-menu {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: 12px;
 }
 
 .cu-user-name {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
+  padding: 8px 12px;
+  background: transparent;
+  color: #1f1a17;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--text-dark);
-  background: transparent;
-  border: none;
-  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .cu-user-name:hover {
-  background: rgba(0, 0, 0, 0.05);
+  background: #f5f5f5;
+  border-color: #1f1a17;
 }
 
 .cu-dropdown-icon {
-  width: 14px;
-  height: 14px;
-  stroke: currentColor;
-  stroke-width: 2;
-  fill: none;
+  width: 16px;
+  height: 16px;
   transition: transform 0.2s;
 }
 
@@ -142,9 +139,9 @@
   right: 0;
   min-width: 180px;
   background: #fff;
-  border: 1px solid var(--border-color);
+  border: 1px solid #e5e5e5;
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   overflow: hidden;
   padding: 8px 0;
@@ -156,26 +153,26 @@
   padding: 12px 20px;
   text-align: left;
   font-size: 14px;
-  color: var(--text-dark);
+  color: #1f1a17;
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
-  font-weight: 400;
+  transition: background 0.2s;
 }
 
 .cu-dropdown-item:hover {
-  background: #f9f6f2;
-  color: var(--text-dark);
+  background: #f5f5f5;
 }
 
-.cu-dropdown-item:active {
-  background: #f0ebe4;
+.cu-dropdown-item.active {
+  background: #f9f6f2;
+  color: #1f1a17;
+  font-weight: 500;
 }
 
 .cu-dropdown-divider {
   height: 1px;
-  background: var(--border-color);
+  background: #e5e5e5;
   margin: 8px 0;
 }
 

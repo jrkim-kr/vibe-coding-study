@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jeongran Kim | Portfolio</title>
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&family=Poppins:wght@500;600&family=Press+Start+2P&family=VT323&display=swap"
+    rel="stylesheet" />
+</head>
+
+<body class="theme-modern">
+  <div class="page">
+    <header class="header">
+      <div class="header-left">
+        <span class="logo-dot"></span>
+        <span class="logo-text">Jeongran Kim</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-item" data-scroll-to="about">소개</button>
+        <button class="nav-item" data-scroll-to="stack">기술 스택</button>
+        <button class="nav-item" data-scroll-to="projects">프로젝트</button>
+        <button class="nav-item" data-scroll-to="learning">학습</button>
+      </nav>
+      <button class="theme-toggle" id="themeToggle" aria-label="테마 전환">
+        Retro
+      </button>
+    </header>
+
+    <main class="main">
+      <!-- Hero Section -->
+      <section class="section hero" id="about">
+        <div class="hero-text">
+          <p class="hero-tag">웹 개발자 · 백엔드 & 프론트엔드</p>
+          <h1 class="hero-title">
+            비록 작은 빛일지라도,<br />
+            어둠 속에서 의미는 더 커진다고 믿습니다.
+          </h1>
+          <p class="hero-desc">
+            깊이 사고하고, 창의적으로 발상하며,<br />
+            누군가의 하루를 밝히는 웹 서비스를 만드는 개발자
+            <span class="hero-highlight">김정란</span>입니다.
+          </p>
+          <div class="hero-buttons">
+            <a href="https://github.com/jrkim-kr" target="_blank" rel="noreferrer" class="btn btn-primary">
+              GitHub 프로필 바로가기
+            </a>
+            <a href="https://docs.google.com/presentation/d/1VFUWUt3kJEjoEd4VB5QjSvsIUWyKcv2f/edit?usp=sharing&ouid=113834826654274042534&rtpof=true&sd=true"
+              target="_blank" rel="noreferrer" class="btn btn-ghost">
+              포트폴리오 보러가기
+            </a>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <span class="status-dot"></span>
+            <span class="status-text">Currently learning Vibe Coding</span>
+          </div>
+          <div class="hero-card-body">
+            <div class="profile-row">
+              <div class="profile-avatar">
+                <img src="./profile-avatar.png" alt="Profile" class="profile-avatar-img" />
+              </div>
+              <div>
+                <div class="profile-name">Jeongran Kim</div>
+                <div class="profile-role">Web Developer</div>
+              </div>
+            </div>
+            <dl class="profile-meta">
+              <div class="meta-row">
+                <dt>Tech Stack</dt>
+                <dd>Java, Spring, Spring Boot, React, MySQL, AWS</dd>
+              </div>
+              <div class="meta-row">
+                <dt>Github</dt>
+                <dd>
+                  <a href="https://github.com/jrkim-kr" target="_blank" rel="noreferrer">
+                    @jrkim-kr
+                  </a>
+                </dd>
+              </div>
+              <div class="meta-row">
+                <dt>Email</dt>
+                <dd>
+                  <a href="mailto:jeongrankim99@gmail.com">
+                    jeongrankim99@gmail.com
+                  </a>
+                </dd>
+              </div>
+              <div class="meta-row">
+                <dt>Velog</dt>
+                <dd>
+                  <a href="https://velog.io/@jrkim99/posts" target="_blank" rel="noreferrer">
+                    velog.io/@jrkim99
+                  </a>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stack Section -->
+      <section class="section" id="stack">
+        <div class="section-header">
+          <h2>기술 스택</h2>
+          <p>서비스를 끝까지 책임질 수 있는 풀스택 역량을 지향합니다.</p>
+        </div>
+        <div class="stack-grid">
+          <article class="stack-card">
+            <h3>Language</h3>
+            <p>비즈니스 로직과 웹 UI 모두에 익숙합니다.</p>
+            <div class="chip-group">
+              <span class="chip">Java</span>
+              <span class="chip">JavaScript</span>
+              <span class="chip">HTML</span>
+              <span class="chip">CSS</span>
+            </div>
+          </article>
+
+          <article class="stack-card">
+            <h3>Backend</h3>
+            <p>도메인 설계와 안정적인 API 설계를 중요하게 생각합니다.</p>
+            <div class="chip-group">
+              <span class="chip">Spring</span>
+              <span class="chip">Spring Boot</span>
+              <span class="chip">JSP / Servlet</span>
+            </div>
+          </article>
+
+          <article class="stack-card">
+            <h3>Frontend</h3>
+            <p>사용자가 직관적으로 사용할 수 있는 인터페이스를 추구합니다.</p>
+            <div class="chip-group">
+              <span class="chip">React</span>
+              <span class="chip">SPA</span>
+              <span class="chip">Responsive UI</span>
+            </div>
+          </article>
+
+          <article class="stack-card">
+            <h3>Infra & Tools</h3>
+            <p>협업과 배포까지 고려한 개발 문화를 지향합니다.</p>
+            <div class="chip-group">
+              <span class="chip">MySQL</span>
+              <span class="chip">Oracle</span>
+              <span class="chip">MariaDB</span>
+              <span class="chip">AWS</span>
+              <span class="chip">Git / GitHub</span>
+              <span class="chip">Figma</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Projects Section -->
+      <section class="section" id="projects">
+        <div class="section-header">
+          <h2>프로젝트</h2>
+          <p>사용자의 일상을 조금 더 편리하게 만드는 서비스들을 만들고 있습니다.</p>
+        </div>
+
+        <div class="project-list">
+          <article class="project-card">
+            <div class="project-header">
+              <h3>ReciPICK</h3>
+              <span class="project-tag">레시피 기반 식재료 쇼핑몰</span>
+            </div>
+            <p class="project-desc">
+              레시피를 기반으로 필요한 식재료를 한 번에 구매할 수 있는 쇼핑몰 서비스입니다.
+              5인 팀 프로젝트에서 팀장을 맡아 요구사항 정리, 백엔드 설계, 주요 기능 개발을
+              리딩했습니다.
+            </p>
+            <dl class="project-meta">
+              <div class="meta-row">
+                <dt>역할</dt>
+                <dd>팀장 / Spring 기반 백엔드 개발, 주요 화면 설계</dd>
+              </div>
+              <div class="meta-row">
+                <dt>기술</dt>
+                <dd>Spring, JSP, MySQL, Git, GitHub</dd>
+              </div>
+            </dl>
+            <a href="https://github.com/SHDS-ReciPICK/shds-recipick.github.io" target="_blank" rel="noreferrer"
+              class="project-link">
+              GitHub Repo 열기
+            </a>
+          </article>
+
+          <article class="project-card">
+            <div class="project-header">
+              <h3>SOL Pick</h3>
+              <span class="project-tag">스마트 식생활 관리 서비스</span>
+            </div>
+            <p class="project-desc">
+              사용자의 식습관 데이터를 기반으로 건강한 식생활을 도와주는 Spring Boot 기반
+              서비스입니다. 4인 팀 프로젝트에서 팀장을 맡아 전체 구조 설계와 주요 기능 구현을
+              담당했습니다.
+            </p>
+            <dl class="project-meta">
+              <div class="meta-row">
+                <dt>역할</dt>
+                <dd>팀장 / Spring Boot 백엔드, API 설계, 데이터 모델링</dd>
+              </div>
+              <div class="meta-row">
+                <dt>기술</dt>
+                <dd>Spring Boot, JPA, MySQL, AWS, GitHub</dd>
+              </div>
+            </dl>
+            <a href="https://github.com/SHDS-SOLPick/shds-solpick.github.io" target="_blank" rel="noreferrer"
+              class="project-link">
+              GitHub Repo 열기
+            </a>
+          </article>
+        </div>
+      </section>
+
+      <!-- Learning Section -->
+      <section class="section" id="learning">
+        <div class="section-header">
+          <h2>학습 & 노트</h2>
+          <p>꾸준한 학습을 위해 강의 내용을 레포지토리로 정리하고 있습니다.</p>
+        </div>
+
+        <div class="project-list">
+          <!-- 최근 학습: Vibe Coding -->
+          <article class="project-card">
+            <div class="project-header">
+              <h3>Vibe Coding by 코알누</h3>
+              <span class="project-tag">2025.10 ~ 2025.11</span>
+            </div>
+            <p class="project-desc">
+              코딩알려주는누나 바이브 코딩 강의를 들으며 진행한 실습 코드와 정리입니다. Netflix 클론,
+              Todo 풀스택, 쇼핑몰 프로젝트 등 실전형 예제를 중심으로 구성되어 있습니다.
+            </p>
+            <dl class="project-meta">
+              <div class="meta-row">
+                <dt>내용</dt>
+                <dd>HTML/CSS/JS, React, Node/Express, MongoDB를 활용한 풀스택 실습과 학습 문서 정리</dd>
+              </div>
+              <div class="meta-row">
+                <dt>기술</dt>
+                <dd>JavaScript, React, Node.js, Express, MongoDB, Vercel/Cloudtype 배포</dd>
+              </div>
+            </dl>
+            <a href="https://github.com/jrkim-kr/vibe-coding-study" target="_blank" rel="noreferrer"
+              class="project-link">
+              GitHub Repo 열기
+            </a>
+          </article>
+
+          <!-- 이전 학습: Docker -->
+          <article class="project-card">
+            <div class="project-header">
+              <h3>Docker by 코딩애플</h3>
+              <span class="project-tag">2025.06 ~ 2025.08</span>
+            </div>
+            <p class="project-desc">
+              코딩애플 도커 강의를 들으며 정리한 레포지토리입니다. Dockerfile, docker-compose,
+              nginx 설정, 컨테이너 네트워크/볼륨 구성 등 실습 코드를 포함하고 있습니다.
+            </p>
+            <dl class="project-meta">
+              <div class="meta-row">
+                <dt>내용</dt>
+                <dd>도커 기본 개념, 이미지/컨테이너 관리, Compose, 네트워크, 오케스트레이션 개념 정리</dd>
+              </div>
+              <div class="meta-row">
+                <dt>기술</dt>
+                <dd>Dockerfile, Docker Compose, Nginx, Node.js</dd>
+              </div>
+            </dl>
+            <a href="https://github.com/jrkim-kr/docker-coding-apple" target="_blank" rel="noreferrer"
+              class="project-link">
+              GitHub Repo 열기
+            </a>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>© 2025 Jeongran Kim. </span>
+      <button class="to-top-btn" id="toTopBtn">맨 위로</button>
+    </footer>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+
+</html>

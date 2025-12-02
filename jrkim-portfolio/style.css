@@ -1,0 +1,802 @@
+:root {
+  /* base tokens (will be overridden per theme on body) */
+  --bg: #050816;
+  --bg-elevated: #0b1020;
+  --card: #0f172a;
+  --accent: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.14);
+  --accent-strong: #2563eb;
+  --text: #e5e7eb;
+  --text-soft: #9ca3af;
+  --border-subtle: rgba(148, 163, 184, 0.3);
+  --shadow-soft: 0 40px 80px rgba(15, 23, 42, 0.75);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+}
+
+/* Modern (기본) */
+body.theme-modern {
+  --bg: #050816;
+  --bg-elevated: #0b1020;
+  --card: #0f172a;
+  --accent: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.14);
+  --accent-strong: #2563eb;
+  --text: #e5e7eb;
+  --text-soft: #9ca3af;
+  --border-subtle: rgba(148, 163, 184, 0.3);
+  --shadow-soft: 0 40px 80px rgba(15, 23, 42, 0.75);
+}
+
+/* Retro: 보라 / 파랑 / 핑크 팔레트 + 픽셀 느낌 */
+body.theme-retro {
+  --bg: #050010;
+  --bg-elevated: #07001f;
+  --card: #0b002b;
+  --accent: #ff7af2; /* 핑크 */
+  --accent-soft: rgba(255, 122, 242, 0.2);
+  --accent-strong: #7f5dff; /* 보라 + 파랑 */
+  --text: #fdf2ff;
+  --text-soft: #e1c9ff;
+  --border-subtle: rgba(255, 164, 255, 0.9);
+  --shadow-soft: 0 0 0 2px rgba(127, 93, 255, 0.7);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui,
+    sans-serif;
+  background: radial-gradient(circle at top, #020617, #000);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+body.theme-retro {
+  font-family: "VT323", "Pretendard", -apple-system, BlinkMacSystemFont,
+    system-ui, monospace;
+  background: linear-gradient(
+      90deg,
+      rgba(255, 122, 242, 0.04) 1px,
+      transparent 1px
+    ),
+    linear-gradient(180deg, rgba(127, 93, 255, 0.06) 1px, transparent 1px),
+    radial-gradient(circle at top, #2a0072, #020008);
+  image-rendering: pixelated;
+}
+
+body.theme-retro::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0.3) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: soft-light;
+  opacity: 0.8;
+  z-index: -1;
+}
+
+body.theme-retro {
+  cursor: url("data:image/svg+xml,%3Csvg width='16' height='16' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='16' height='16' fill='black'/%3E%3Crect x='1' y='1' width='14' height='14' fill='%23ff7af2'/%3E%3Crect x='3' y='3' width='10' height='10' fill='black'/%3E%3C/svg%3E")
+      8 8,
+    crosshair;
+}
+
+body.theme-retro .page {
+  max-width: 1040px;
+}
+
+body.theme-retro .section {
+  background: repeating-linear-gradient(
+    135deg,
+    #13002e,
+    #13002e 2px,
+    #0a001a 2px,
+    #0a001a 4px
+  );
+  border-radius: 8px;
+  border: 2px solid var(--border-subtle);
+  box-shadow: 0 0 0 2px #000, 0 0 18px rgba(255, 122, 242, 0.4);
+}
+
+body {
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px 20px 40px;
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  margin-bottom: 24px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  backdrop-filter: blur(20px);
+}
+
+body.theme-retro .header {
+  border-radius: 0;
+  border-width: 2px;
+  border-color: var(--border-subtle);
+  background: linear-gradient(90deg, #0a001f, #190058, #0a001f);
+  box-shadow: 0 0 0 2px #000, 0 0 16px rgba(127, 93, 255, 0.7);
+  backdrop-filter: none;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.logo-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, #bfdbfe, #2563eb);
+  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.25);
+}
+
+.logo-text {
+  font-family: "Poppins", "Pretendard", -apple-system, BlinkMacSystemFont,
+    system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.theme-retro .logo-text {
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.theme-toggle {
+  margin-left: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text-soft);
+  font-size: 11px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+body.theme-retro .theme-toggle {
+  background: #050010;
+  border-radius: 0;
+  border-color: rgba(255, 164, 255, 0.9);
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 9px;
+}
+
+.nav-item {
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--text-soft);
+  padding: 6px 12px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+.nav-item:hover {
+  background: rgba(15, 23, 42, 0.9);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.nav-item:active {
+  transform: translateY(0);
+}
+
+body.theme-retro .nav-item {
+  border-radius: 0;
+  border: 1px solid rgba(255, 164, 255, 0.6);
+  background: rgba(5, 0, 32, 0.9);
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 11px;
+  padding-inline: 10px;
+}
+
+body.theme-retro .nav-item:hover {
+  background: #ff7af2;
+  color: #050010;
+  transform: translateY(-1px);
+  box-shadow: 0 0 8px rgba(255, 122, 242, 0.7);
+}
+
+/* Layout */
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.section {
+  padding: 24px 22px 26px;
+  background: linear-gradient(145deg, #020617, #020617 40%, #030712 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  box-shadow: var(--shadow-soft);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(0, 1.05fr);
+  gap: 32px;
+}
+
+body.theme-retro .hero {
+  border-bottom: 1px solid rgba(255, 164, 255, 0.7);
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(37, 99, 235, 0.5);
+}
+
+body.theme-retro .hero-tag {
+  border-radius: 0;
+  border-color: rgba(255, 164, 255, 0.9);
+  background: #050010;
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 9px;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+body.theme-retro .hero-title {
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.hero-desc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-soft);
+}
+
+.hero-highlight {
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.btn {
+  border-radius: var(--radius-pill);
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #0b1120;
+  box-shadow: 0 18px 38px rgba(37, 99, 235, 0.55);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 24px 55px rgba(37, 99, 235, 0.65);
+}
+
+.btn-ghost {
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--text);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+}
+
+/* Hero의 한글 버튼(포트폴리오 보러가기)만 살짝 더 크게 */
+.btn-ghost {
+  font-size: 15px;
+}
+
+body.theme-retro .btn-primary {
+  border-radius: 0;
+  border: 2px solid #ffffff;
+  background: linear-gradient(135deg, #ff7af2, #7f5dff);
+  box-shadow: 0 0 0 2px #000, 0 0 12px rgba(255, 122, 242, 0.8);
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 9px;
+}
+
+body.theme-retro .btn-ghost {
+  border-radius: 0;
+  border-color: rgba(255, 164, 255, 0.9);
+  background: #050010;
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 11px;
+}
+
+.btn-ghost:hover {
+  background: rgba(15, 23, 42, 1);
+}
+
+/* Hero Card */
+.hero-card {
+  border-radius: 20px;
+  background: radial-gradient(
+    circle at 0% 0%,
+    rgba(59, 130, 246, 0.18),
+    #020617
+  );
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+body.theme-retro .hero-card {
+  border-radius: 0;
+  background: repeating-linear-gradient(
+    135deg,
+    #120033,
+    #120033 2px,
+    #060018 2px,
+    #060018 4px
+  );
+  border-color: rgba(255, 164, 255, 0.9);
+  box-shadow: 0 0 0 2px #000, 0 0 14px rgba(127, 93, 255, 0.8);
+}
+
+.hero-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-soft);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.85),
+    rgba(15, 23, 42, 1)
+  );
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #22c55e;
+  box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.25);
+}
+
+.status-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 15px;
+}
+
+.profile-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, #1d4ed8, #22c55e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.profile-role {
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+.profile-meta {
+  margin: 0;
+  padding: 10px 10px 4px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.meta-row {
+  display: flex;
+  gap: 10px;
+}
+
+.meta-row dt {
+  min-width: 70px;
+  color: var(--text-soft);
+  font-size: 15px;
+}
+
+.meta-row dd {
+  margin: 0;
+  font-size: 15px;
+}
+
+.meta-row a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.meta-row a:hover {
+  text-decoration: underline;
+}
+
+/* Section header */
+.section-header {
+  margin-bottom: 18px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+body.theme-retro .section-header h2 {
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 14px;
+}
+
+.section-header p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+
+/* Stack */
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.stack-card {
+  border-radius: var(--radius-md);
+  padding: 12px 12px 14px;
+  background: radial-gradient(circle at 0 0, rgba(15, 23, 42, 0.9), #020617);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+body.theme-retro .stack-card {
+  border-radius: 0;
+  background: #070017;
+  border: 2px solid rgba(255, 164, 255, 0.9);
+  box-shadow: inset 0 0 0 2px #000, 0 0 12px rgba(127, 93, 255, 0.7);
+}
+
+.stack-card h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+.stack-card p {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--text-soft);
+}
+
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 13px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(148, 163, 184, 0.75);
+  color: #e5e7eb;
+}
+
+/* Projects */
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.project-card {
+  border-radius: var(--radius-md);
+  padding: 14px 14px 12px;
+  background: radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.16), #020617);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+}
+
+body.theme-retro .project-card {
+  border-radius: 0;
+  background: #050012;
+  border: 2px solid rgba(255, 164, 255, 0.9);
+  box-shadow: inset 0 0 0 2px #000, 0 0 14px rgba(255, 122, 242, 0.8);
+}
+
+.project-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.project-header h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+body.theme-retro .project-header h3 {
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 11px;
+}
+
+.project-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  color: var(--text-soft);
+}
+
+/* 학습 섹션 날짜 태그 (2025.10 ~ 2025.11 등)만 조금 더 크게 */
+#learning .project-tag {
+  font-size: 13px;
+}
+
+.project-desc {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.project-meta {
+  margin: 0 0 8px;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.project-meta .meta-row dt {
+  min-width: 38px;
+}
+
+.project-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.project-link::after {
+  content: "↗";
+  font-size: 11px;
+}
+
+.project-link:hover {
+  text-decoration: underline;
+}
+
+body.theme-retro .project-link {
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 9px;
+  color: #ff7af2;
+}
+
+body.theme-retro .project-link::after {
+  content: " ►";
+}
+
+body.theme-retro .project-link:hover {
+  text-decoration: none;
+  text-shadow: 0 0 6px rgba(255, 122, 242, 0.9);
+}
+
+/* Contact */
+.contact-card {
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.contact-label {
+  min-width: 54px;
+  color: var(--text-soft);
+}
+
+.contact-value {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.contact-value:hover {
+  color: var(--accent);
+}
+
+/* Footer */
+.footer {
+  margin-top: 24px;
+  padding: 12px 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--text-soft);
+}
+
+body.theme-retro .footer {
+  border-top: 2px solid rgba(255, 164, 255, 0.9);
+  padding-top: 8px;
+  font-family: "Press Start 2P", system-ui, sans-serif;
+  font-size: 9px;
+}
+
+.to-top-btn {
+  border-radius: 999px;
+  padding: 4px 10px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.95);
+  color: var(--text-soft);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.to-top-btn:hover {
+  color: var(--text);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page {
+    padding-inline: 16px;
+  }
+
+  .header {
+    padding-inline: 14px;
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-card {
+    order: -1;
+  }
+
+  .stack-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .section {
+    padding-inline: 16px;
+  }
+}

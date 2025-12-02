@@ -1,10 +1,12 @@
 # Netflix Style 영화 웹사이트
 
-현재 상영 중인 영화를 보여주는 Netflix 스타일의 웹사이트입니다. TMDB(The Movie Database) API를 활용하여 영화 정보를 가져오고, 반응형 디자인으로 구현되었습니다.
+현재 상영 중인 영화를 보여주는 Netflix 스타일의 웹사이트입니다. <br>
+TMDB(The Movie Database) API를 활용하여 영화 정보를 가져오고, 반응형 디자인으로 구현되었습니다.
 
 ## 📋 프로젝트 소개
 
-이 프로젝트는 HTML, CSS, JavaScript를 사용하여 Netflix와 유사한 디자인의 영화 웹사이트를 만든 학습 프로젝트입니다. TMDB API를 통해 현재 상영 중인 영화 데이터를 가져와 표시합니다.
+이 프로젝트는 HTML, CSS, JavaScript를 사용하여 Netflix와 유사한 디자인의 영화 웹사이트를 만든 학습 프로젝트입니다. <br>
+TMDB API를 통해 현재 상영 중인 영화 데이터를 가져와 표시합니다.
 
 ## 🎯 주요 기능
 
@@ -149,7 +151,7 @@ cd jrkim-netflix
 
 ## 📝 학습 내용 정리
 
-### 강의 3-2 
+### 강의 3-2
 
 - TMDB API 연동
 - 비동기 데이터 처리 (async/await)
@@ -157,7 +159,7 @@ cd jrkim-netflix
 - CSS Flexbox를 활용한 레이아웃
 - 반응형 디자인 구현
 
-### 강의 3-3 
+### 강의 3-3
 
 - 영화 데이터 필드 활용 (overview, vote_count, release_date)
 - 모달 창 구현

@@ -1,6 +1,15 @@
 // API 설정
-const API_KEY = "63578d97cb4029b0ad29035c9581d29a";
-const API_URL = `https://api.themoviedb.org/3/movie/now_playing?api_key=${API_KEY}&language=ko-KR&page=1`;
+// - 로컬( localhost )에서는 TMDB를 직접 호출합니다. (개발용, 키 노출 감수)
+// - 배포 환경(Vercel 등)에서는 Serverless Function(`/api/now-playing`)을 호출합니다.
+const IS_LOCALHOST =
+  location.hostname === "localhost" || location.hostname === "127.0.0.1";
+
+// 로컬 개발용 TMDB API 키 (노출되어도 괜찮다는 전제)
+const LOCAL_TMDB_API_KEY = "63578d97cb4029b0ad29035c9581d29a";
+
+const API_URL = IS_LOCALHOST
+  ? `https://api.themoviedb.org/3/movie/now_playing?api_key=${LOCAL_TMDB_API_KEY}&language=ko-KR&page=1`
+  : "/api/now-playing";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 // DOM 요소
